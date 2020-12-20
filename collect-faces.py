@@ -1,4 +1,4 @@
-import settings
+from  settings import faces
 import argparse
 from google_face_crawler import GoogleFaceCrawler 
 
@@ -16,9 +16,6 @@ parser.add_argument('--gpu', default=-1, type=int, help='GPU ID')
 args = parser.parse_args()
 
 if __name__ == '__main__':  
-  faces = ["Megawati Soekarnoputri"]
-  #faces = ["Aida Mustafa", "Ahok", "Megawati Soekarnoputri", "Mandra", "Benyamin Sueb"]
-  #faces = ["Anneke Gronloh"]
   gfc = GoogleFaceCrawler(args)
   gfc.crawl(faces)
 

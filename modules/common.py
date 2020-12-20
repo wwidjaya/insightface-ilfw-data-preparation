@@ -19,6 +19,14 @@ class Common():
   def get_file_ext_from_url(self, url:str):
     p = urlparse(url)
     return os.path.splitext(p.path)[1]
+
+  def read_file_as_array(self, filename):
+    lines = []
+    with open(filename) as fp:
+        for line in fp:
+            lines.append(line.strip()) 
+    return lines   
+
     
       
 

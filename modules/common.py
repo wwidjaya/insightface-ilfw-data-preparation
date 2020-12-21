@@ -27,6 +27,10 @@ class Common():
             lines.append(line.strip()) 
     return lines   
 
-    
+  def listing_directory(self, folder):
+    files = []
+    for filename in os.listdir(folder):
+      files.append(os.path.join(folder,filename))
+    return files
       
 

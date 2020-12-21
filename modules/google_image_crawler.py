@@ -13,7 +13,6 @@ GOOGLE_IMAGE_URL = 'https://images.google.com'
 SEARCH_BOX_SELECTOR = 'input.gLFyf'
 IMAGE_PATH = 'downloads'
 SEARCH_URL = "https://www.google.com/search?safe=off&site=&tbm=isch&source=hp&q={q}&oq={q}&gs_l=img"
-EXEC_PATH = "./modules/chromedriver.exe"
 
 class GoggleImageCrawler:
   def __init__(self, args):  
@@ -24,7 +23,8 @@ class GoggleImageCrawler:
     self.options.add_argument("--window-size=%s" % WINDOW_SIZE)
 
   def crawl(self, faces, callback):
-    self.wd = webdriver.Chrome(chrome_options=self.options, executable_path=EXEC_PATH)
+    exec_path = self.args.chrome_exec_path
+    self.wd = webdriver.Chrome(chrome_options=self.options, executable_path=exec_path)
     for face in faces:
       self.wd.get(GOOGLE_IMAGE_URL)
       search_box = self.wd.find_element_by_css_selector(SEARCH_BOX_SELECTOR)

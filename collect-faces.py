@@ -2,7 +2,7 @@ from  settings import faces
 import argparse
 from google_face_crawler import GoogleFaceCrawler 
 
-parser = argparse.ArgumentParser(description='Data Preparation Program for Face Recognition Thesis Project')
+parser = argparse.ArgumentParser(description='Data Collection Program for Face Recognition Thesis Project')
 # general
 parser.add_argument('--silent', default='True', help='Show crawler browser window')
 parser.add_argument('--model-prefix', default='./models/model-r50-am-lfw/model', help='The model location prefix ')
@@ -13,6 +13,7 @@ parser.add_argument('--image-path', default='downloads', help='The image downloa
 parser.add_argument('--sleep', default=1,  type=int, help='Sleep between interaction')
 parser.add_argument('--model', default='./models/model-r50-am-lfw/model,0', help='path to load model.')
 parser.add_argument('--gpu', default=-1, type=int, help='GPU ID')
+parser.add_argument('--chrome-exec-path', default='./modules/chromedriver.exe', help='path to load model.')
 args = parser.parse_args()
 
 if __name__ == '__main__':  

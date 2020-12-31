@@ -23,3 +23,7 @@ Run the data preparation script in the following order:
 
 Notes: ILFW is short for Indonesian Life Face in the Wild
 
+## TODO
+1. Detail python command
+2. More explanation
+

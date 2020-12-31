@@ -1,5 +1,7 @@
-# dcnn-arcface-model
+# insightface-lfw-data-preparation
 Data Preparation Script for Collecting Face Dataset from Google Image Crawler
+
+Before running, you need to list down  the name of famous person that you would like to search from google in a file named face_name_list.dat
 
 Run the data preparation script in the following order:
 

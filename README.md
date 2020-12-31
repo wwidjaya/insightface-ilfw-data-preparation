@@ -1,4 +1,4 @@
-# Data Preparation Script for Custom Face Dataset that are collected from Google Image
+# Data Preparation Script for Custom Face Dataset that are collected from Google Image for InsightFace Project
 
 By [Wirianto Widjaya](https://github.com/wwidjaya) 
 ## Preparation steps:

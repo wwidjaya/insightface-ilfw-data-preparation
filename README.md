@@ -1,4 +1,4 @@
-# Data Preparation Script for Collecting Face Dataset from Google Image Crawler
+# Data Preparation Script for Custom Face Dataset that are collected from Google Image
 ## Preparation steps:
 
 1. Install required package
@@ -18,7 +18,7 @@ Run the data preparation script in the following order:
 2. prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
 3. generate_lst.py, by default will generate a .lst file in ./ilfw directory
 4. generate_rec.py, by default will generate .rec and .idx file in ./ilfw directory
-5. geenrate_pairs.py, by default will generate pairs.txt file in ./ilfw directory
+5. generate_pairs.py, by default will generate pairs.txt file in ./ilfw directory
 6. pack_lfw.py, by default will generate .bin file in ./ilfw directory
 
 Notes: ILFW is short for Indonesian Life Face in the Wild

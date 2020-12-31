@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import os
+from  util import CommonUtil as cu
 class FaceCommon:
 
     @staticmethod
@@ -45,6 +46,9 @@ class FaceCommon:
     @staticmethod
     def generate_lst_file(data_dir, list_file_name, age):
         names = []
+        temp = os.path.split(list_file_name)
+        path = temp[0]
+        cu.make_directory(path)
         for name in os.listdir(data_dir):
             names.append(name)
         names = sorted(names)

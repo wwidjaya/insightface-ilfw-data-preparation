@@ -5,12 +5,21 @@ By [Wirianto Widjaya](https://github.com/wwidjaya)
 
 1. Install required package
 if you are not using GPU
+```
 pip install mxnet 
+```
 or if you are using GPU, please install mxnet-cu92 instead
+```
 pip install mxnet-cu92 
-
+```
+Install Selenium
+```
 pip install selenium
+```
+Install Webdriver
+```
 pip install webdriver
+```
 
 2. Before running, you need to list down  the name of famous person that you would like to search from google in a file named face_name_list.dat
 ## Running the scripts

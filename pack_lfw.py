@@ -20,13 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sys
-import os
+import settings
+import argparse
+from lfw2pack import pack_lfw
 
-sys.path.insert(1, "./modules")
-sys.path.insert(1, "./dataset")
+parser = argparse.ArgumentParser(description='Package LFW images')
+# general
+parser.add_argument('--data-dir', default='./ilfw', help='')
+parser.add_argument('--image-dir', default='./faces', help='')
+parser.add_argument('--image-size', type=str, default='112,112', help='')
+parser.add_argument('--output', default='./ilfw/ilfw.bin', help='path to save.')
+args = parser.parse_args()
 
-from util import CommonUtil as cu
-faces = cu.read_file_as_array("face_name_list.dat")
-
-os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
+pack_lfw(args)

@@ -20,13 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import sys
 import os
+import settings
+from pair_generator import PairsGenerator
 
-sys.path.insert(1, "./modules")
-sys.path.insert(1, "./dataset")
-
-from util import CommonUtil as cu
-faces = cu.read_file_as_array("face_name_list.dat")
-
-os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
+if __name__ == '__main__':
+    data_dir = "./faces/"
+    pairs_filepath = "./ilfw/pairs.txt"
+    img_ext = ".jpg"
+    data_dir = os.path.abspath(data_dir)
+    generatePairs = PairsGenerator(data_dir, pairs_filepath, img_ext)
+    generatePairs.generate()

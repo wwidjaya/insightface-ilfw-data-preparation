@@ -1,4 +1,6 @@
 # Data Preparation Script for Custom Face Dataset that are collected from Google Image
+
+By [Wirianto Widjaya](https://github.com/wwidjaya) 
 ## Preparation steps:
 
 1. Install required package

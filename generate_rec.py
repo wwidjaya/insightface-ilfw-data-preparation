@@ -23,7 +23,7 @@
 import argparse
 import os
 import settings
-from face2rec import Face2Rec 
+from face2rec import Face2Rec
 
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -31,8 +31,6 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--prefix',
                     default='./ilfw',
                     help='prefix of input/output lst and rec files.')
-#parser.add_argument('root', help='path to folder containing images.')
-
 cgroup = parser.add_argument_group('Options for creating image lists')
 cgroup.add_argument('--exts',
                     nargs='+',

@@ -36,7 +36,7 @@ Run the data preparation script in the following order:
 5. generate_pairs.py, by default will generate pairs.txt file in ./ilfw directory
 6. pack_lfw.py, by default will generate .bin file in ./ilfw directory
 
-Notes: ILFW is short for Indonesian Life Face in the Wild
+Notes: ILFW is short for Indonesian Labelled Face in the Wild
 
 ## TODO
 1. Detail python command

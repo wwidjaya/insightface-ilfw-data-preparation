@@ -1,4 +1,4 @@
-# Data Preparation Script for Custom Face Dataset that are collected from Google Image for InsightFace Project
+# Data Preparation Script for Custom Face Dataset that are collected from Google Image for [InsightFace](https://github.com/deepinsight/insightface) Project
 
 By [Wirianto Widjaya](https://github.com/wwidjaya) 
 ## Preparation steps:
@@ -19,6 +19,10 @@ pip install selenium
 Install Webdriver
 ```
 pip install webdriver
+```
+Install insightface
+```
+pip install insightface
 ```
 
 2. Before running, you need to list down  the name of famous person that you would like to search from google in a file named face_name_list.dat

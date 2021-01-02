@@ -33,9 +33,6 @@ class FaceDataPreparer:
     args.ctx_id = args.gpu
     self.args = args
     self.model = FaceModel(args, use_large_detector=True)
-    cu.set_log_verbose(False)
-    cu.set_log_file("prepare_face.log")
-
   
   def valid_file(self, valid_count, face, ext):
     valid_count = valid_count + 1
@@ -44,7 +41,7 @@ class FaceDataPreparer:
 
 
   def prepare_faces(self, faces):
-    facebar = tqdm(faces, leave=False, position=1, desc="Overall Progress")
+    facebar = cu.get_primary_bar(faces)
     for face in facebar:
       face = fc.get_face_name(face)
       cu.log("Initiating pre-processing for {}", face)
@@ -71,7 +68,7 @@ class FaceDataPreparer:
       anchor = []
       iu.init_duplicate_check()
       facebar.refresh()
-      filebar = tqdm(files, leave=True, position=0)
+      filebar = cu.get_secondary_bar(files)
       for file in filebar:
         cu.log(f"Reading image file {file} for pre-processing...")
         image = cv2.imread(file)
@@ -87,7 +84,6 @@ class FaceDataPreparer:
           valid_count, image_file = self.valid_file(valid_count, face, ext)
         else:
           is_found, is_valid = iu.is_duplicate(image)
-          print(f"is valid: {is_valid}")
           if not is_valid:
               folder = invalid
               image = iu.get_blank_image()

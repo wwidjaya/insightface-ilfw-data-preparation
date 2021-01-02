@@ -23,7 +23,7 @@
 from  settings import faces
 from face_data_preparer import FaceDataPreparer
 import argparse
-
+from util import CommonUtil as cu
 
 parser = argparse.ArgumentParser(description='Data Preparer Program for Face Recognition Thesis Project')
 # general
@@ -37,6 +37,9 @@ parser.add_argument('--model', default='./models/model-r50-am-lfw/model,0', help
 parser.add_argument('--gpu', default=-1, type=int, help='GPU ID')
 args = parser.parse_args()
 
-if __name__ == '__main__':  
+if __name__ == '__main__':
+  cu.set_log_verbose(False)
+  cu.set_log_prefix("prepare_face.log")
+  faces = ['Abdul Fikri']
   fdp = FaceDataPreparer(args)
   fdp.prepare_faces(faces)

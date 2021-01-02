@@ -21,7 +21,9 @@
 # SOFTWARE.
 
 import os
-from  util import CommonUtil as cu
+from util import CommonUtil as cu
+
+
 class FaceCommon:
 
     @staticmethod

@@ -24,6 +24,7 @@
 from  settings import faces
 import argparse
 from google_face_crawler import GoogleFaceCrawler 
+from util import CommonUtil as cu
 
 parser = argparse.ArgumentParser(description='Data Collection Program for Face Recognition Thesis Project')
 # general
@@ -41,6 +42,8 @@ parser.add_argument('--chrome-exec-path', default='./modules/chromedriver.exe', 
 args = parser.parse_args()
 
 if __name__ == '__main__':  
+  cu.set_log_verbose(False)
+  cu.set_log_prefix('collect_face.log')
   gfc = GoogleFaceCrawler(args)
   gfc.crawl(faces)
 

@@ -46,7 +46,10 @@ class GoogleFaceCrawler:
         face = cv2.imread(file_path)
         cu.log("Aigning face {}", file_path)
         aligned_face = self.model.align_face(face)
-        if iu.is_duplicate(aligned_face):
+        is_found, is_valid = iu.is_duplicate(aligned_face)
+        if not is_valid:
+            raise Exception("Invalid face found {}".format(file_path))
+        if is_found:
             raise Exception("Duplicate face found {}".format(file_path))
         cu.log("Writing aligned face {}", file_path)
         cv2.imwrite(file_path, aligned_face)

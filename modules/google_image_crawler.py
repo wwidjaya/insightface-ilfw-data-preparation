@@ -23,6 +23,7 @@
 
 import selenium
 from selenium import webdriver
+from selenium.webdriver.remote.remote_connection import LOGGER, logging
 from selenium.webdriver.chrome.options import Options
 
 
@@ -34,6 +35,7 @@ import os
 from urllib.request import Request, urlopen
 import numpy as np
 import cv2
+from tqdm import tqdm
 
 WINDOW_SIZE = "1920,1080"
 GOOGLE_IMAGE_URL = 'https://images.google.com'
@@ -48,12 +50,17 @@ class GoggleImageCrawler:
         self.options = Options()
         self.options.add_argument("--headless")
         self.options.add_argument("--window-size=%s" % WINDOW_SIZE)
+        self.options.add_argument("--log-level=%s" % 3)
+        self.facebar = None
+        self.imageBar = None
+
 
     def crawl(self, faces, callback):
         exec_path = self.args.chrome_exec_path
         self.wd = webdriver.Chrome(
             chrome_options=self.options, executable_path=exec_path)
-        for face in faces:
+        self.facebar = cu.get_primary_bar(faces)
+        for face in self.facebar:
             iu.init_duplicate_check()
             self.wd.get(GOOGLE_IMAGE_URL)
             search_box = self.wd.find_element_by_css_selector(
@@ -61,6 +68,8 @@ class GoggleImageCrawler:
             search_box.send_keys(face)
             self.image_count = 0
             self.count = 0
+            self.facebar.refresh()
+            self.imageBar = cu.get_secondary_bar(bar_total=self.args.max_faces, bar_desc=f"Download image for {face}")
             self.fetch_image_urls(face, callback)
         self.wd.quit()
 
@@ -90,8 +99,10 @@ class GoggleImageCrawler:
     def persist_image(self, folder_path: str, file_name: str, url: str, callback):
         try:
             image, ext = self.url_to_image(url)
-
-            if iu.is_duplicate(image):
+            is_found, is_valid = iu.is_duplicate(image)
+            if not is_valid:
+                raise Exception("find invalid  image: {}".format(url))
+            if is_found:
                 raise Exception("find duplicate image: {}".format(url))
 
             if ext == "":
@@ -101,7 +112,6 @@ class GoggleImageCrawler:
                 os.mkdir(folder_path)
 
             folder_path = os.path.join(folder_path, file_name)
-            print(folder_path)
 
             if not os.path.exists(folder_path):
                 os.mkdir(folder_path)
@@ -109,7 +119,7 @@ class GoggleImageCrawler:
             self.count = self.count + 1
             file_path = fc.get_full_file_name(
                 folder_path, file_name, self.count, ext)
-            print(file_path)
+
             cu.log("Writing image file {}", file_path)
             cv2.imwrite(file_path, image)
             cu.log("Finished Writing image file {}", file_path)
@@ -166,6 +176,8 @@ class GoggleImageCrawler:
                             image_count = image_count + self.persist_image(
                                 folder_path=images_path, file_name=fc.get_face_name(query), url=url, callback=callback)
                             image_urls.add(url)
+                            self.imageBar.update(1)
+                            self.imageBar.refresh()
                         except Exception as e:
                             cu.log(f"ERROR - Could not save {url} - {e}")
 

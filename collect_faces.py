@@ -30,7 +30,7 @@ parser = argparse.ArgumentParser(description='Data Collection Program for Face R
 parser.add_argument('--silent', default='True', help='Show crawler browser window')
 parser.add_argument('--model-prefix', default='./models/model-r50-am-lfw/model', help='The model location prefix ')
 parser.add_argument('--model-epoch', default=0, type=int, help='The model epoch')
-parser.add_argument('--max-faces', default=100,  type=int, help='Maximum number of faces')
+parser.add_argument('--max-faces', default=30,  type=int, help='Maximum number of faces')
 parser.add_argument('--image-size', default='112,112', help='The face image size')
 parser.add_argument('--image-path', default='downloads', help='The image download paths')
 parser.add_argument('--image-format', default='.jpg', help='The image download paths')

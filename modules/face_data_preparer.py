@@ -26,14 +26,15 @@ from face_model import FaceModel
 from face_common import FaceCommon as fc
 import os
 import cv2
-import numpy as np
-
+from tqdm import tqdm
 
 class FaceDataPreparer:
   def __init__(self, args):
     args.ctx_id = args.gpu
     self.args = args
     self.model = FaceModel(args, use_large_detector=True)
+    cu.set_log_verbose(False)
+    cu.set_log_file("prepare_face.log")
 
   
   def valid_file(self, valid_count, face, ext):
@@ -43,7 +44,8 @@ class FaceDataPreparer:
 
 
   def prepare_faces(self, faces):
-    for face in faces:
+    facebar = tqdm(faces, leave=False, position=1, desc="Overall Progress")
+    for face in facebar:
       face = fc.get_face_name(face)
       cu.log("Initiating pre-processing for {}", face)
       path =  os.path.join(self.args.image_path, face).replace(' ', '_')
@@ -68,31 +70,43 @@ class FaceDataPreparer:
       valid_count = 0
       anchor = []
       iu.init_duplicate_check()
-      for file in files:
-        cu.log("Reading image file {} for pre-processing...", file)
+      facebar.refresh()
+      filebar = tqdm(files, leave=True, position=0)
+      for file in filebar:
+        cu.log(f"Reading image file {file} for pre-processing...")
         image = cv2.imread(file)
         count = count + 1
         folder = valid
         splits = os.path.split(file)                  
         image_file = splits[1]
+        filebar.set_description(f"Processing {image_file}")
         ext = self.args.file_ext
         if (count == 1):
           cu.log("Reading anchor image {}", file)
           anchor = self.model.get_feature(image)
           valid_count, image_file = self.valid_file(valid_count, face, ext)
         else:
-          if iu.is_duplicate(image):
-            cu.log("found duplicate image {}", file)
-            folder = duplicate
-          else:
-            cu.log("Comparing image {}", file)
-            score, result = self.model.compare_face(anchor, image, low_threshold=0.5)
-            if result:
-              valid_count, image_file = self.valid_file(valid_count, face, ext)
-              print("File ", file,  " sama, hasil: ", score)
-            else:
+          is_found, is_valid = iu.is_duplicate(image)
+          print(f"is valid: {is_valid}")
+          if not is_valid:
               folder = invalid
-              print("File ", file,  " tidak sama, hasil: ", score)
+              image = iu.get_blank_image()
+              cu.log(f"File {file} tidak valid.")
+          else:
+            if is_found:
+              cu.log("found duplicate image {}", file)
+              folder = duplicate
+            else:
+              cu.log("Comparing image {}", file)
+              score, result = self.model.compare_face(anchor, image, low_threshold=0.5)
+              if result:
+                valid_count, image_file = self.valid_file(valid_count, face, ext)
+                cu.log(f"File {file} sama, hasil: {score}")
+              else:
+                folder = invalid
+                cu.log(f"File {file} tidak sama, hasil: {score}")
+        filebar.set_description(desc=f"Process for {face} is finished.", refresh=True)
+        filebar.refresh()
         
         image_file = os.path.join(folder, image_file)
         cv2.imwrite(image_file, image)

@@ -62,12 +62,15 @@ class FaceCommon:
             names.append(name)
         names = sorted(names)
         f = open(list_file_name, 'w')
-        for name in names:
-            print(name)
+        name_bar = cu.get_secondary_bar(values=names, bar_desc='Overall progress')
+        for name in name_bar:
             a = []
             for file in os.listdir(data_dir + '/' + name):
+                name_bar.set_description(f"Processing {file}")
                 if file == ".DS_Store":
                     continue
                 a.append(data_dir + '/' + name + '/' + file)
                 f.write(str(1) + '\t' + data_dir + '/' + name +
                         '/' + file + '\t' + str(age) + '\n')
+            name_bar.set_description(f"Processing finished")
+

@@ -47,7 +47,7 @@ def load_faces():
   faces = cu.read_file_as_array(filename)
   if len(range) == 2:    
     start = range[0]
-    end = range[1]
+    end = range[1] + 1
     faces = faces[start:end]
   return faces
 

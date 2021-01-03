@@ -30,6 +30,7 @@
     }
 
 """
+from util import CommonUtil as cu
 import numpy as np
 import os
 import sys
@@ -39,6 +40,7 @@ import cv2
 import time
 from easydict import EasyDict as edict
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
+
 
 try:
     import multiprocessing
@@ -81,7 +83,7 @@ class Face2Rec:
                 if not line or not line.strip():
                     break
                 line_number = line_number + 1
-                print(line_number, ':', line)
+                cu.log(f"{line_number} : {line}")
                 item = edict()
                 item.flag = 0
                 item.image_path, label, item.bbox, item.landmark, item.aligned = Face2Rec.parse_lst_line(
@@ -174,7 +176,7 @@ class Face2Rec:
 
                 if count % 1000 == 0:
                     cur_time = time.time()
-                    print('time:', cur_time - pre_time, ' count:', count)
+                    cu.log('time:', cur_time - pre_time, ' count:', count)
                     pre_time = cur_time
                 count += 1
 
@@ -262,12 +264,14 @@ class Face2Rec:
 
     @staticmethod
     def convert_face_2_rec(args):
+        cu.set_log_prefix('generate_rec.log')
+        cu.set_log_verbose(False)
         if os.path.isdir(args.prefix):
             working_dir = args.prefix
         else:
             working_dir = os.path.dirname(args.prefix)
         image_size = (112, 112)
-        print('image_size', image_size)
+        cu.log(f'Image size: {image_size}')
         args.image_h = image_size[0]
         args.image_w = image_size[1]
         files = [
@@ -278,8 +282,10 @@ class Face2Rec:
         count = 0
         for fname in files:
             if fname.startswith(args.prefix) and fname.endswith('.lst'):
-                print('Creating .rec file from', fname, 'in', working_dir)
+                cu.log(f'Creating .rec file from {fname} in {working_dir}')
                 count += 1
+                image_count = cu.count_line_in_file(fname) + 2
+                cu.log(f"Estimated image count: {image_count}")
                 image_list = Face2Rec.read_list(fname)
                 # -- write_record -- #
                 if args.num_thread > 1 and multiprocessing is not None:
@@ -306,7 +312,7 @@ class Face2Rec:
                     q_out.put(None)
                     write_process.join()
                 else:
-                    print(
+                    cu.log(
                         'multiprocessing not available, fall back to single threaded encoding'
                     )
                     try:
@@ -322,17 +328,16 @@ class Face2Rec:
                         os.path.join(working_dir, fname_rec), 'w')
                     cnt = 0
                     pre_time = time.time()
+                    image_bar = cu.get_secondary_bar(
+                        bar_total=image_count, bar_desc='Overall progress')
                     for i, item in enumerate(image_list):
                         Face2Rec.image_encode(args, i, item, q_out)
                         if q_out.empty():
                             continue
                         _, s, item = q_out.get()
                         record.write_idx(item[0], s)
-                        if cnt % 1000 == 0:
-                            cur_time = time.time()
-                            print('time:', cur_time -
-                                  pre_time, ' count:', cnt)
-                            pre_time = cur_time
+                        image_bar.update()
+                        image_bar.refresh()
                         cnt += 1
         if not count:
-            print('Did not find and list file with prefix %s' % args.prefix)
+            cu.log(f'Did not find and list file with prefix {args.prefix}')

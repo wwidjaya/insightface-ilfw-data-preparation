@@ -9,6 +9,9 @@
 
 import os
 import random
+from util import CommonUtil as cu
+from face_common import FaceCommon as fu
+
 
 class PairsGenerator:
     """
@@ -26,55 +29,75 @@ class PairsGenerator:
         self.data_dir = data_dir
         self.pairs_filepath = pairs_filepath
         self.img_ext = img_ext
-
+        cu.set_log_verbose(False)
+        cu.set_log_prefix('generate_pair.log')
 
     def generate(self):
         self._generate_matches_pairs()
         self._generate_mismatches_pairs()
 
-
     def _generate_matches_pairs(self):
         """
         Generate all matches pairs
         """
-        for name in os.listdir(self.data_dir):
-            if name == ".DS_Store":
-                continue
-
-            a = []
-            path = os.path.join(self.data_dir, name)
-            for file in os.listdir(path):
-                if file == ".DS_Store":
+        namebar = cu.get_primary_bar(os.listdir(
+            self.data_dir), bar_desc="Matching pairs generation progress")
+        with open(self.pairs_filepath, "w") as f:
+            for name in namebar:
+                if name == ".DS_Store":
                     continue
-                a.append(file)
+                a = []
+                path = os.path.join(self.data_dir, name)
+                files = os.listdir(path)
+                count = len(files)
+                filebar = cu.get_secondary_bar(
+                    values=files, bar_desc='Reading progress')
+                for file in filebar:
+                    if file == ".DS_Store":
+                        continue
+                    a.append(file)
+                    filebar.update()
+                    filebar.refresh()
 
-            with open(self.pairs_filepath, "a") as f:
-                for i in range(3):
-                    temp = random.choice(a).split("_") # This line may vary depending on how your images are named.
+                writebar = cu.get_secondary_bar(
+                    bar_total=count, bar_desc='writing progress')
+                for i in range(count):
+                    # This line may vary depending on how your images are named.
+                    temp = random.choice(a).split("_")
                     w = temp[0] + "_" + temp[1]
-                    print(random.choice(a))
-                    l = random.choice(a).split("_")[2].lstrip("0").rstrip(self.img_ext)
-                    r = random.choice(a).split("_")[2].lstrip("0").rstrip(self.img_ext)
+                    l = random.choice(a).split("_")[2].lstrip(
+                        "0").rstrip(self.img_ext)
+                    r = random.choice(a).split("_")[2].lstrip(
+                        "0").rstrip(self.img_ext)
                     f.write(w + "\t" + l + "\t" + r + "\n")
-
+                    writebar.update()
+                    writebar.refresh()
+        namebar.set_description("Matching pairs generation completed")
 
     def _generate_mismatches_pairs(self):
         """
         Generate all mismatches pairs
         """
-        for i, name in enumerate(os.listdir(self.data_dir)):
-            if name == ".DS_Store":
-                continue
-
-            remaining = os.listdir(self.data_dir)
-            remaining = [f_n for f_n in remaining if f_n != ".DS_Store"]
-            # del remaining[i] # deletes the file from the list, so that it is not chosen again
-            other_dir = random.choice(remaining)
-            with open(self.pairs_filepath, "a") as f:
-                for i in range(3):
-                    file1 = random.choice(os.listdir(os.path.join(self.data_dir, name)))
-                    file2 = random.choice(os.listdir(os.path.join(self.data_dir, other_dir)))
-                    f.write(name + "\t" + file1.split("_")[2].lstrip("0").rstrip(self.img_ext) + "\t")
-                f.write("\n")
-
-
+        names = os.listdir(self.data_dir)
+        namebar = cu.get_secondary_bar(
+            values=names, bar_desc="Mismatched pairs generation progress")
+        with open(self.pairs_filepath, "a") as f:
+            for i, name in enumerate(namebar):
+                if name == ".DS_Store":
+                    continue
+                curr_path = os.path.join(self.data_dir, name)
+                files = os.listdir(curr_path)
+                for file in files:
+                    temp = names.copy()
+                    del temp[i]
+                    other = random.choice(temp)
+                    other_path = os.path.join(self.data_dir, other)
+                    other_file = random.choice(os.listdir(other_path))
+                    name, counter = fu.split_face_filename(file)
+                    f.write(name + "\t" + counter + "\t")
+                    name, counter = fu.split_face_filename(other_file)
+                    f.write(name + "\t" + counter + "\t")
+                    f.write("\n")
+                namebar.update()
+                namebar.refresh()
+        namebar.set_description("Mismatched pairs generation completed")

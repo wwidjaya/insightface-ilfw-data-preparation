@@ -78,6 +78,7 @@ logger = Logger()
 
 sys.stdout = logger
 
+
 class ImageUtil:
 
     images = []
@@ -91,12 +92,12 @@ class ImageUtil:
         is_valid = True
         found = False
         try:
-          hash = ImageUtil.dhash(image)
-          found = any(elem == hash for elem in ImageUtil.images)
-          if not found:
-              ImageUtil.images.append(hash)
+            hash = ImageUtil.dhash(image)
+            found = any(elem == hash for elem in ImageUtil.images)
+            if not found:
+                ImageUtil.images.append(hash)
         except Exception as e:
-          is_valid = False
+            is_valid = False
         return found, is_valid
 
     @staticmethod
@@ -124,18 +125,19 @@ class CommonUtil:
 
     @staticmethod
     def get_primary_bar(values, bar_desc='Overall progress'):
-      return tqdm(values, leave=False, position=1, desc=bar_desc)
+        return tqdm(values, leave=False, position=1, desc=bar_desc)
 
     @staticmethod
     def get_secondary_bar(values=None, bar_total=None, bar_desc=''):
-      bar = None
-      if values is not None:
-        bar = tqdm(values, leave=True, position=0, desc=bar_desc)
-      else:
-        if bar_total is not None:
-          bar = tqdm(total=bar_total, leave=True, position=0,  desc=bar_desc)
-      return bar
-    
+        bar = None
+        if values is not None:
+            bar = tqdm(values, leave=True, position=0, desc=bar_desc)
+        else:
+            if bar_total is not None:
+                bar = tqdm(total=bar_total, leave=True,
+                           position=0,  desc=bar_desc)
+        return bar
+
     @staticmethod
     def set_log_verbose(is_verbose: bool):
         logger.set_verbose(is_verbose)
@@ -204,13 +206,27 @@ class CommonUtil:
         return files
 
     @staticmethod
-    def get_json_value(json_value, key_string:str, default):
-      value = default
-      try:
-        keys = key_string.split('.')
-        for key in keys:
-          json_value = json_value[key]
-        value = json_value
-      except Exception as e:
-        pass
-      return value
+    def get_json_value(json_value, key_string: str, default):
+        value = default
+        try:
+            keys = key_string.split('.')
+            for key in keys:
+                json_value = json_value[key]
+            value = json_value
+        except Exception as e:
+            pass
+        return value
+
+    @staticmethod
+    def blocks(files, size=65536):
+        while True:
+            b = files.read(size)
+            if not b:
+                break
+            yield b
+
+    @staticmethod
+    def count_line_in_file(filename:str):
+        with open(filename, "r", encoding="utf-8", errors='ignore') as f:
+            count = (sum(bl.count("\n") for bl in CommonUtil.blocks(f)))
+        return count

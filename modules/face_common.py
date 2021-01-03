@@ -27,6 +27,16 @@ from util import CommonUtil as cu
 class FaceCommon:
 
     @staticmethod
+    def split_face_filename(path):
+        file = os.path.split(path)[1]
+        filename = os.path.splitext(file)
+        splits = filename[0].split('_')
+        name = splits[0] + '_' + splits[1]
+        counter = splits[2].lstrip('0')
+        return name, counter
+
+
+    @staticmethod
     def get_face_name(face):
         face = face.replace(' ', '_')
         names = face.split('_')
@@ -54,11 +64,15 @@ class FaceCommon:
 
     @staticmethod
     def generate_lst_file(data_dir, list_file_name, age):
+        cu.set_log_prefix('generate_lst.log')
+        cu.set_log_verbose(False)
+        cu.log("Generating list file")
         names = []
         temp = os.path.split(list_file_name)
         path = temp[0]
         cu.make_directory(path)
         for name in os.listdir(data_dir):
+            cu.log(f"Adding name {name} to list file")
             names.append(name)
         names = sorted(names)
         f = open(list_file_name, 'w')
@@ -66,6 +80,7 @@ class FaceCommon:
         for name in name_bar:
             a = []
             for file in os.listdir(data_dir + '/' + name):
+                cu.log(f"Processing {file}")
                 name_bar.set_description(f"Processing {file}")
                 if file == ".DS_Store":
                     continue

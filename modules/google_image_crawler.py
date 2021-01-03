@@ -71,6 +71,8 @@ class GoggleImageCrawler:
             self.facebar.refresh()
             self.imageBar = cu.get_secondary_bar(bar_total=self.args.max_faces, bar_desc=f"Download image for {face}")
             self.fetch_image_urls(face, callback)
+            self.imageBar.close()
+        self.facebar.close()
         self.wd.quit()
 
     def url_to_image(self, url: str):

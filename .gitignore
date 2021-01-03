@@ -11,3 +11,6 @@ __pycache__
 /archive
 /test.py
 /ilfw
+logs
+/names
+/settings.json

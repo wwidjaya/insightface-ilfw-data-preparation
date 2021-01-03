@@ -30,6 +30,7 @@ import sys
 import numpy as np
 import pathlib
 from tqdm import tqdm
+import json
 
 import sys
 
@@ -201,3 +202,15 @@ class CommonUtil:
         for filename in os.listdir(folder):
             files.append(os.path.join(folder, filename))
         return files
+
+    @staticmethod
+    def get_json_value(json_value, key_string:str, default):
+      value = default
+      try:
+        keys = key_string.split('.')
+        for key in keys:
+          json_value = json_value[key]
+        value = json_value
+      except Exception as e:
+        pass
+      return value

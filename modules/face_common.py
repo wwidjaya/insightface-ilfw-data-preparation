@@ -34,7 +34,14 @@ class FaceCommon:
         if count == 1:
             face = face + '_' + face
         if count >= 3:
-            face = names[0] + '_' + names[1]
+            face = ''
+            counter = 0
+            for name in names:                
+                counter = counter + 1
+                if counter == count:
+                    face = face + '_' + names[counter - 1]
+                else:
+                    face = face + name[:1] 
         return face
 
     @staticmethod

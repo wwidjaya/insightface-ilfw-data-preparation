@@ -22,11 +22,38 @@
 
 import sys
 import os
+import json
 
-sys.path.insert(1, "./modules")
-sys.path.insert(1, "./dataset")
 
+def set_search_path():
+  sys.path.insert(1, "./modules")
+  sys.path.insert(1, "./dataset")
+  os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
+
+def read_setting():
+
+  SETTINGS_FILENAME = "./settings.json"
+
+  settings = {}
+
+  if os.path.exists(SETTINGS_FILENAME):
+    with open(SETTINGS_FILENAME, 'r') as f:
+      settings = json.load(f)
+  return settings
+
+def load_faces():
+  filename = cu.get_json_value(settings, 'names.filename', 'face_name_list.dat')
+  range = cu.get_json_value(settings, 'names.range', [])
+  faces = cu.read_file_as_array(filename)
+  if len(range) == 2:    
+    start = range[0]
+    end = range[1]
+    faces = faces[start:end]
+  return faces
+
+
+set_search_path()
 from util import CommonUtil as cu
-faces = cu.read_file_as_array("face_name_list.dat")
 
-os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
+settings = read_setting()
+faces = load_faces()

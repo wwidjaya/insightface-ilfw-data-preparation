@@ -102,7 +102,6 @@ class FaceDataPreparer:
                 folder = invalid
                 cu.log(f"File {file} tidak sama, hasil: {score}")
         filebar.set_description(desc=f"Process for {face} is finished.", refresh=True)
-        filebar.refresh()
         
         image_file = os.path.join(folder, image_file)
         cv2.imwrite(image_file, image)

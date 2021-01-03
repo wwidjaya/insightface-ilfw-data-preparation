@@ -40,6 +40,5 @@ args = parser.parse_args()
 if __name__ == '__main__':
   cu.set_log_verbose(False)
   cu.set_log_prefix("prepare_face.log")
-  faces = ['Abdul Fikri']
   fdp = FaceDataPreparer(args)
   fdp.prepare_faces(faces)

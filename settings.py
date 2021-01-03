@@ -46,8 +46,8 @@ def load_faces():
   range = cu.get_json_value(settings, 'names.range', [])
   faces = cu.read_file_as_array(filename)
   if len(range) == 2:    
-    start = range[0]
-    end = range[1] + 1
+    start = range[0] - 1
+    end = range[1]
     faces = faces[start:end]
   return faces
 

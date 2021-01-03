@@ -40,38 +40,29 @@ class PairsGenerator:
         """
         Generate all matches pairs
         """
-        namebar = cu.get_primary_bar(os.listdir(
+        namebar = cu.get_secondary_bar(values=os.listdir(
             self.data_dir), bar_desc="Matching pairs generation progress")
         with open(self.pairs_filepath, "w") as f:
             for name in namebar:
                 if name == ".DS_Store":
                     continue
-                a = []
                 path = os.path.join(self.data_dir, name)
                 files = os.listdir(path)
-                count = len(files)
-                filebar = cu.get_secondary_bar(
-                    values=files, bar_desc='Reading progress')
-                for file in filebar:
+                temp = files.copy()
+                for i, file in enumerate(files):
                     if file == ".DS_Store":
-                        continue
-                    a.append(file)
-                    filebar.update()
-                    filebar.refresh()
-
-                writebar = cu.get_secondary_bar(
-                    bar_total=count, bar_desc='writing progress')
-                for i in range(count):
+                        del temp[i]
+                for i, file in enumerate(temp):
                     # This line may vary depending on how your images are named.
-                    temp = random.choice(a).split("_")
-                    w = temp[0] + "_" + temp[1]
-                    l = random.choice(a).split("_")[2].lstrip(
-                        "0").rstrip(self.img_ext)
-                    r = random.choice(a).split("_")[2].lstrip(
-                        "0").rstrip(self.img_ext)
-                    f.write(w + "\t" + l + "\t" + r + "\n")
-                    writebar.update()
-                    writebar.refresh()
+                    cu.log(f"Generating pair for file {file}")
+                    others = temp.copy()
+                    if len(others) > 1:
+                        del others[i]
+                    other = random.choice(others)
+                    name, counter = fu.split_face_filename(file)
+                    name, other_counter = fu.split_face_filename(other)
+                    f.write(name + "\t" + counter + "\t" + other_counter + "\n")
+                namebar.refresh()
         namebar.set_description("Matching pairs generation completed")
 
     def _generate_mismatches_pairs(self):

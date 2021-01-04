@@ -31,13 +31,10 @@
 
 """
 
-import mxnet as mx
-from mxnet import ndarray as nd
 import pickle
-import sys
 import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'eval'))
 import lfw
+from util import CommonUtil as cu
 
 def pack_lfw(args):
   lfw_dir = args.data_dir
@@ -46,14 +43,14 @@ def pack_lfw(args):
   lfw_paths, issame_list = lfw.get_paths(image_dir, lfw_pairs, 'jpg')
   lfw_bins = []
   i = 0
-  for path in lfw_paths:
-    print(path)
+
+  filebar = cu.get_secondary_bar(values=lfw_paths, bar_desc='Overall packing progress')
+  for path in filebar:
     with open(path, 'rb') as fin:
       _bin = fin.read()
       lfw_bins.append(_bin)
       i+=1
-      if i%1000==0:
-        print('loading lfw', i)
+    filebar.refresh()
 
   with open(args.output, 'wb') as f:
     pickle.dump((lfw_bins, issame_list), f, protocol=pickle.HIGHEST_PROTOCOL)

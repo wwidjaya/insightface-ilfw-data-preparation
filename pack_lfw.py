@@ -26,7 +26,7 @@ from lfw2pack import pack_lfw
 
 parser = argparse.ArgumentParser(description='Package LFW images')
 # general
-parser.add_argument('--data-dir', default='./ilfw', help='')
+parser.add_argument('--data-dir', default='./faces', help='')
 parser.add_argument('--image-dir', default='./faces', help='')
 parser.add_argument('--image-size', type=str, default='112,112', help='')
 parser.add_argument('--output', default='./ilfw/ilfw.bin', help='path to save.')

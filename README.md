@@ -49,7 +49,7 @@ When properly run, the dataset will create:
 
 ## Before training:
 
-1. Copy your dataset to folder datasets, and assign your dataset variable for the training as follow:
+Copy your dataset to folder datasets, and assign your dataset variable for the training as follow:
 ```
 dataset.emore = edict()
 dataset.emore.dataset = 'emore'

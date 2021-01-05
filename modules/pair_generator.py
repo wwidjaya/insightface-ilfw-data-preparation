@@ -40,8 +40,7 @@ class PairsGenerator:
         """
         Generate all matches pairs
         """
-        ignored = [".DS_Store"]
-        names = [x for x in os.listdir(self.data_dir) if x not in ignored and not x.endswith('.lst') and not x.endswith('.txt')]
+        names = fu.list_face_names(self.data_dir)
         namebar = cu.get_secondary_bar(values=names, bar_desc="Matching pairs generation progress")
         with open(self.pairs_filepath, "w") as f:
             for name in namebar:
@@ -70,8 +69,7 @@ class PairsGenerator:
         """
         Generate all mismatches pairs
         """
-        ignored = [".DS_Store"]
-        names = [x for x in os.listdir(self.data_dir) if x not in ignored and not x.endswith('.lst') and not x.endswith('.txt')]
+        names = fu.list_face_names(self.data_dir)
         namebar = cu.get_secondary_bar(
             values=names, bar_desc="Mismatched pairs generation progress")
         with open(self.pairs_filepath, "a") as f:

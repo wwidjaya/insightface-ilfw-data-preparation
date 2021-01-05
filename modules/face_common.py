@@ -89,12 +89,18 @@ class FaceCommon:
                         '/' + file + '\t' + str(age) + '\n')
             name_bar.set_description(f"Processing finished")
 
+    @staticmethod
+    def list_face_names(data_dir):
+        ignored = [".DS_Store"]
+        names = [x for x in os.listdir(data_dir) if x not in ignored and not x.endswith('.lst') and not x.endswith('.txt')]
+        return names
+
 
     @staticmethod
     def generate_property_file(data_dir, property_file_name):
         cu.set_log_prefix('generate_prop.log')
         cu.log("Generating property file")
-        count = len(os.listdir(data_dir))
+        count = len(FaceCommon.list_face_names(data_dir))
         f = open(property_file_name, 'w')
         f.write(f"{count},112,112")
         cu.log('Property file generated')

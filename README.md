@@ -31,10 +31,11 @@ Run the data preparation script in the following order:
 
 1. collect_faces.py, by default will generate all raw faces into ./downloads directory. You need to make sure that the first file is the anchor image for face comparison to select valid faces in the next steps
 2. prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
-3. generate_lst.py, by default will generate a .lst file in ./ilfw directory
-4. generate_rec.py, by default will generate .rec and .idx file in ./ilfw directory
-5. generate_pairs.py, by default will generate pairs.txt file in ./ilfw directory
-6. pack_lfw.py, by default will generate .bin file in ./ilfw directory
+3. generate_lst.py, by default will generate a train.lst file in ./ilfw directory
+4. generate_rec.py, by default will generate train.rec and train.idx file in ./ilfw directory
+5. generate_propery.py, by default will generate property file in ./ilfw directory
+6. generate_pairs.py, by default will generate pairs.txt file in ./ilfw directory
+7. pack_lfw.py, by default will generate .bin file in ./ilfw directory
 
 Notes: ILFW is short for Indonesian Labelled Face in the Wild
 

@@ -89,3 +89,12 @@ class FaceCommon:
                         '/' + file + '\t' + str(age) + '\n')
             name_bar.set_description(f"Processing finished")
 
+
+    @staticmethod
+    def generate_property_file(data_dir, property_file_name):
+        cu.set_log_prefix('generate_prop.log')
+        cu.log("Generating property file")
+        count = len(os.listdir(data_dir))
+        f = open(property_file_name, 'w')
+        f.write(f"{count},112,112")
+        cu.log('Property file generated')

@@ -282,7 +282,7 @@ class Face2Rec:
         ]
         count = 0
         for fname in files:
-            if fname.startswith(args.prefix) and fname.endswith('.lst'):
+            if fname.startswith(args.prefix) and fname.endswith('train.lst'):
                 cu.log(f'Creating .rec file from {fname} in {working_dir}')
                 count += 1
                 image_count = cu.count_line_in_file(fname) + 2

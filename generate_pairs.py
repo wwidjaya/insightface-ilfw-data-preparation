@@ -26,7 +26,7 @@ from pair_generator import PairsGenerator
 
 if __name__ == '__main__':
     data_dir = "./faces/"
-    pairs_filepath = "./ilfw/pairs.txt"
+    pairs_filepath = "./faces/pairs.txt"
     img_ext = ".jpg"
     data_dir = os.path.abspath(data_dir)
     generatePairs = PairsGenerator(data_dir, pairs_filepath, img_ext)

@@ -270,6 +270,7 @@ class Face2Rec:
             working_dir = args.prefix
         else:
             working_dir = os.path.dirname(args.prefix)
+        output_dir = args.output_dir
         image_size = (112, 112)
         cu.log(f'Image size: {image_size}')
         args.image_h = image_size[0]
@@ -324,8 +325,8 @@ class Face2Rec:
                     fname_rec = os.path.splitext(fname)[0] + '.rec'
                     fname_idx = os.path.splitext(fname)[0] + '.idx'
                     record = mx.recordio.MXIndexedRecordIO(
-                        os.path.join(working_dir, fname_idx),
-                        os.path.join(working_dir, fname_rec), 'w')
+                        os.path.join(output_dir, fname_idx),
+                        os.path.join(output_dir, fname_rec), 'w')
                     cnt = 0
                     image_bar = cu.get_secondary_bar(
                         bar_total=image_count, bar_desc='Overall progress')

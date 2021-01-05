@@ -46,6 +46,8 @@ class PairsGenerator:
             for name in namebar:
                 if name == ".DS_Store":
                     continue
+                if not os.path.isdir(name):
+                    continue
                 path = os.path.join(self.data_dir, name)
                 files = os.listdir(path)
                 temp = files.copy()
@@ -75,6 +77,8 @@ class PairsGenerator:
         with open(self.pairs_filepath, "a") as f:
             for i, name in enumerate(namebar):
                 if name == ".DS_Store":
+                    continue
+                if not os.path.isdir(name):
                     continue
                 curr_path = os.path.join(self.data_dir, name)
                 files = os.listdir(curr_path)

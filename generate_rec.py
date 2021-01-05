@@ -29,8 +29,11 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Make a record database by reading from an image list')
 parser.add_argument('--prefix',
-                    default='./ilfw',
+                    default='./faces',
                     help='prefix of input/output lst and rec files.')
+parser.add_argument('--output-dir',
+                    default='./ilfw',
+                    help='location of lst and rec files.')
 cgroup = parser.add_argument_group('Options for creating image lists')
 cgroup.add_argument('--exts',
                     nargs='+',
@@ -95,4 +98,5 @@ rgroup.add_argument(
     help='Whether to also pack multi dimensional label in the record file')
 args = parser.parse_args()
 args.prefix = os.path.abspath(args.prefix)
+args.output_dir = os.path.abspath(args.output_dir)
 Face2Rec.convert_face_2_rec(args)

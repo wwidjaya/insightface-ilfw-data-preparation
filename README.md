@@ -32,7 +32,7 @@ Run the data preparation script in the following order:
 1. collect_faces.py, by default will generate all raw faces into ./downloads directory. You need to make sure that the first file is the anchor image for face comparison to select valid faces in the next steps
 2. prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
 3. Prepare Training Dataset
-  3.1 generate_lst.py, by default will generate a train.lst file in ./ilfw directory
+  3.1 generate_lst.py, by default will generate a train.lst file in ./faces directory
   3.2 generate_rec.py, by default will generate train.rec and train.idx file in ./ilfw directory
   3.3 generate_propery.py, by default will generate property file in ./ilfw directory
 4. Prepare Validation Dataset

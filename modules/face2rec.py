@@ -327,7 +327,6 @@ class Face2Rec:
                         os.path.join(working_dir, fname_idx),
                         os.path.join(working_dir, fname_rec), 'w')
                     cnt = 0
-                    pre_time = time.time()
                     image_bar = cu.get_secondary_bar(
                         bar_total=image_count, bar_desc='Overall progress')
                     for i, item in enumerate(image_list):

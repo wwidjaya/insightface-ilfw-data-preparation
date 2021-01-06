@@ -31,7 +31,7 @@ Run the data preparation script in the following order:
 
 1. collect_faces.py, by default will generate all raw faces into ./downloads directory. You need to make sure that the first file is the anchor image for face comparison to select valid faces in the next steps
 2. prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
-3. split_data_sets.py, by default will generate train.part, ilfw.part, and ilfw-test.part file in ./faces directory
+3. split_data_sets.py, by default will generate datasets into train, verification, and test (80:10:10), represented by train.part, ilfw.part, and ilfw-test.part file in ./faces directory
 4. generate_train.py, by default will generate a train.lst file in ./faces directory, generate train.rec, train.idx, and property file in ./ilfw directory
 5. generate_validation.py, by default will generate pairs.txt file in ./faces directory, and generate .bin file in ./ilfw directory
 
@@ -53,9 +53,8 @@ dataset.emore.dataset = 'emore'
 dataset.emore.dataset_path = '../datasets/ilfw'
 dataset.emore.num_classes = <the number of identities>
 dataset.emore.image_shape = (112,112,3)
-dataset.emore.val_targets = ['ilfw', 'ilfw-bin']
+dataset.emore.val_targets = ['ilfw', 'ilfw-test']
 ```
 ## TODO
-1. Detail python command
-2. More explanation
+More detailed explanation
 

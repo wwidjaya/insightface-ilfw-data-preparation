@@ -37,20 +37,21 @@ import lfw
 from util import CommonUtil as cu
 
 def pack_lfw(args):
-  lfw_dir = args.data_dir
-  image_dir = args.image_dir
-  lfw_pairs = lfw.read_pairs(os.path.join(lfw_dir, 'pairs.txt'))
-  lfw_paths, issame_list = lfw.get_paths(image_dir, lfw_pairs, 'jpg')
-  lfw_bins = []
-  i = 0
 
-  filebar = cu.get_secondary_bar(values=lfw_paths, bar_desc='Overall packing progress')
-  for path in filebar:
-    with open(path, 'rb') as fin:
-      _bin = fin.read()
-      lfw_bins.append(_bin)
-      i+=1
-    filebar.refresh()
+  for part in args.parts:
+    face_dir = args.face_dir
+    pairs = lfw.read_pairs(os.path.join(face_dir, f'{part}-pairs.txt'))
+    paths, issame_list = lfw.get_paths(face_dir, pairs, 'jpg')
+    bins = []
+    i = 0
 
-  with open(args.output, 'wb') as f:
-    pickle.dump((lfw_bins, issame_list), f, protocol=pickle.HIGHEST_PROTOCOL)
+    filebar = cu.get_secondary_bar(values=paths, bar_desc='Overall packing progress')
+    for path in filebar:
+      with open(path, 'rb') as fin:
+        _bin = fin.read()
+        bins.append(_bin)
+        i+=1
+      filebar.refresh()
+    output_file = os.path.join(args.output_dir, f"{part}.bin")
+    with open(output_file, 'wb') as f:
+      pickle.dump((bins, issame_list), f, protocol=pickle.HIGHEST_PROTOCOL)

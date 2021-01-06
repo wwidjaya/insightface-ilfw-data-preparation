@@ -22,7 +22,7 @@
 
 import os
 from util import CommonUtil as cu
-
+import random
 
 class FaceCommon:
 
@@ -63,7 +63,7 @@ class FaceCommon:
         return os.path.join(path, FaceCommon.get_file_name(face, counter, ext))
 
     @staticmethod
-    def generate_lst_file(data_dir, list_file_name, age):
+    def generate_lst_file(face_dir, list_file_name, age):
         cu.set_log_prefix('generate_lst.log')
         cu.set_log_verbose(False)
         cu.log("Generating list file")
@@ -71,36 +71,62 @@ class FaceCommon:
         temp = os.path.split(list_file_name)
         path = temp[0]
         cu.make_directory(path)
-        for name in os.listdir(data_dir):
-            cu.log(f"Adding name {name} to list file")
-            names.append(name)
-        names = sorted(names)
+        names = FaceCommon.list_face_names(face_dir)
         f = open(list_file_name, 'w')
         name_bar = cu.get_secondary_bar(values=names, bar_desc='Overall progress')
         for name in name_bar:
             a = []
-            for file in os.listdir(data_dir + '/' + name):
+            for file in os.listdir(face_dir + '/' + name):
                 cu.log(f"Processing {file}")
                 name_bar.set_description(f"Processing {file}")
                 if file == ".DS_Store":
                     continue
-                a.append(data_dir + '/' + name + '/' + file)
-                f.write(str(1) + '\t' + data_dir + '/' + name +
+                a.append(face_dir + '/' + name + '/' + file)
+                f.write(str(1) + '\t' + face_dir + '/' + name +
                         '/' + file + '\t' + str(age) + '\n')
             name_bar.set_description(f"Processing finished")
 
     @staticmethod
-    def list_face_names(data_dir):
+    def list_face_names(face_dir, part="train"):
+        part_file = os.path.join(face_dir, f"{part}.part")
+        parts = cu.read_file_as_array(part_file)
         ignored = [".DS_Store"]
-        names = [x for x in os.listdir(data_dir) if x not in ignored and not x.endswith('.lst') and not x.endswith('.txt')]
-        return names
+        names = [x for x in os.listdir(face_dir) if x in parts and x not in ignored]
+        return sorted(names)
 
 
     @staticmethod
-    def generate_property_file(data_dir, property_file_name):
+    def generate_property_file(face_dir, property_file_name):
         cu.set_log_prefix('generate_prop.log')
         cu.log("Generating property file")
-        count = len(FaceCommon.list_face_names(data_dir))
+        count = len(FaceCommon.list_face_names(face_dir))
         f = open(property_file_name, 'w')
         f.write(f"{count},112,112")
         cu.log('Property file generated')
+
+    @staticmethod
+    def splits_face_data_sets(face_dir, parts=['train', 'ilfw', 'ilfw-test'], portions=[80, 10, 10]):
+        cu.set_log_prefix('split_face_data_sets.log')
+        cu.log("Splitting face dataset")
+        names = FaceCommon.list_face_names(face_dir)
+        random.shuffle(names)
+        count = len(names)
+        counts =[]
+        part_count = len(parts)
+        running_count = 1
+        for i, portion in enumerate(portions):
+            part = parts[i]
+            if i < (part_count - 1):
+                current_count = int(round(portion/100 * count, 0))
+            else:
+                current_count = count - running_count
+            start = running_count - 1
+            end = running_count + current_count - 1
+            lines = names[start: end]
+            f = open(os.path.join(face_dir, f"{part}.part"), 'w')
+            for line in lines:
+               f.write(f"{line}\n")
+            f.close()
+            running_count = running_count + current_count
+            counts.append(current_count)
+        cu.log('Face splitting finished')

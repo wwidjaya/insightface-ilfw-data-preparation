@@ -31,13 +31,9 @@ Run the data preparation script in the following order:
 
 1. collect_faces.py, by default will generate all raw faces into ./downloads directory. You need to make sure that the first file is the anchor image for face comparison to select valid faces in the next steps
 2. prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
-3. Prepare Training Dataset
-  3.1 generate_lst.py, by default will generate a train.lst file in ./faces directory
-  3.2 generate_rec.py, by default will generate train.rec and train.idx file in ./ilfw directory
-  3.3 generate_propery.py, by default will generate property file in ./ilfw directory
-4. Prepare Validation Dataset
-  4.1 generate_pairs.py, by default will generate pairs.txt file in ./ilfw directory
-  4.2 pack_lfw.py, by default will generate .bin file in ./ilfw directory
+3. split_data_sets.py, by default will generate train.part, ilfw.part, and ilfw-test.part file in ./faces directory
+4. generate_train.py, by default will generate a train.lst file in ./faces directory, generate train.rec, train.idx, and property file in ./ilfw directory
+5. generate_validation.py, by default will generate pairs.txt file in ./faces directory, and generate .bin file in ./ilfw directory
 
 Notes: ILFW is short for Indonesian Labelled Face in the Wild
 
@@ -46,6 +42,7 @@ When properly run, the dataset will create:
 2. train.rec
 3. property
 4. ilfw.bin
+5. ilfw-test.bin
 
 ## Before training:
 
@@ -56,7 +53,7 @@ dataset.emore.dataset = 'emore'
 dataset.emore.dataset_path = '../datasets/ilfw'
 dataset.emore.num_classes = <the number of identities>
 dataset.emore.image_shape = (112,112,3)
-dataset.emore.val_targets = ['ilfw']
+dataset.emore.val_targets = ['ilfw', 'ilfw-bin']
 ```
 ## TODO
 1. Detail python command

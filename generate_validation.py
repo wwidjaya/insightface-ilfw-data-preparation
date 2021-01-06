@@ -20,16 +20,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 import settings
+from pair_generator import PairsGenerator
 import argparse
 from lfw2pack import pack_lfw
 
-parser = argparse.ArgumentParser(description='Package LFW images')
-# general
-parser.add_argument('--data-dir', default='./faces', help='')
-parser.add_argument('--image-dir', default='./faces', help='')
-parser.add_argument('--image-size', type=str, default='112,112', help='')
-parser.add_argument('--output', default='./ilfw/ilfw.bin', help='path to save.')
-args = parser.parse_args()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Generate .bin file for validation session')
+    parser.add_argument('--face-dir', default='./faces',
+                        help='Full path to the directory with peeople and their names, folder should denote the Name_Surname of the person')
+    parser.add_argument('--image-ext', default='.jpg',
+                        help='Full path to the directory with peeople and their names, folder should denote the Name_Surname of the person')
+    parser.add_argument('--parts', default=['ilfw', 'ilfw-test'],
+                        help='Parts of validation dataset')
+    parser.add_argument('--output-dir',
+                        default='./ilfw',
+                        help='location of .bin files.')
+    parser.add_argument('--image-size', type=str, default='112,112', help='')
 
-pack_lfw(args)
+    args = parser.parse_args()
+    args.face_dir = os.path.abspath(args.face_dir)
+    generatePairs = PairsGenerator(args)
+    generatePairs.generate()
+    pack_lfw(args)

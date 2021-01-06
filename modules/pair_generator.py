@@ -20,33 +20,37 @@ class PairsGenerator:
     Doc Reference: http://vis-www.cs.umass.edu/lfw/README.txt
     """
 
-    def __init__(self, data_dir, pairs_filepath, img_ext):
+    def __init__(self, args):
         """
         Parameter data_dir, is your data directory.
         Parameter pairs_filepath, where is the pairs.txt that belongs to.
         Parameter img_ext, is the image data extension for all of your image data.
         """
-        self.data_dir = data_dir
-        self.pairs_filepath = pairs_filepath
-        self.img_ext = img_ext
+
+        self.face_dir = args.face_dir
+        self.parts = args.parts
+        self.image_ext = args.image_ext
+        self.ouput_dir = args.output_dir
         cu.set_log_verbose(False)
         cu.set_log_prefix('generate_pair.log')
 
     def generate(self):
-        self._generate_matches_pairs()
-        self._generate_mismatches_pairs()
+        for part in self.parts:
+            self._generate_matches_pairs(part)
+            self._generate_mismatches_pairs(part)
 
-    def _generate_matches_pairs(self):
+    def _generate_matches_pairs(self, part):
         """
         Generate all matches pairs
         """
-        names = fu.list_face_names(self.data_dir)
+        names = fu.list_face_names(self.face_dir, part)
         namebar = cu.get_secondary_bar(values=names, bar_desc="Matching pairs generation progress")
-        with open(self.pairs_filepath, "w") as f:
+        part_file = os.path.join(self.face_dir, f"{part}-pairs.txt")
+        with open(part_file, "w") as f:
             for name in namebar:
                 if name == ".DS_Store":
                     continue
-                path = os.path.join(self.data_dir, name)
+                path = os.path.join(self.face_dir, name)
                 files = os.listdir(path)
                 temp = files.copy()
                 for i, file in enumerate(files):
@@ -65,24 +69,25 @@ class PairsGenerator:
                 namebar.refresh()
         namebar.set_description("Matching pairs generation completed")
 
-    def _generate_mismatches_pairs(self):
+    def _generate_mismatches_pairs(self, part):
         """
         Generate all mismatches pairs
         """
-        names = fu.list_face_names(self.data_dir)
+        names = fu.list_face_names(self.face_dir, part)
         namebar = cu.get_secondary_bar(
             values=names, bar_desc="Mismatched pairs generation progress")
-        with open(self.pairs_filepath, "a") as f:
+        part_file = os.path.join(self.face_dir, f"{part}-pairs.txt")
+        with open(part_file, "a") as f:
             for i, name in enumerate(namebar):
                 if name == ".DS_Store":
                     continue
-                curr_path = os.path.join(self.data_dir, name)
+                curr_path = os.path.join(self.face_dir, name)
                 files = os.listdir(curr_path)
                 for file in files:
                     temp = names.copy()
                     del temp[i]
                     other = random.choice(temp)
-                    other_path = os.path.join(self.data_dir, other)
+                    other_path = os.path.join(self.face_dir, other)
                     other_file = random.choice(os.listdir(other_path))
                     name, counter = fu.split_face_filename(file)
                     f.write(name + "\t" + counter + "\t")

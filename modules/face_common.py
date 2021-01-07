@@ -88,10 +88,18 @@ class FaceCommon:
 
     @staticmethod
     def list_face_names(face_dir, part="train"):
-        part_file = os.path.join(face_dir, f"{part}.part")
-        parts = cu.read_file_as_array(part_file)
-        ignored = [".DS_Store"]
-        names = [x for x in os.listdir(face_dir) if x in parts and x not in ignored]
+        names = []
+        if not part == "":
+            part_file = os.path.join(face_dir, f"{part}.part")
+            parts = cu.read_file_as_array(part_file)
+            ignored = [".DS_Store"]
+            names = [x for x in os.listdir(face_dir) if x in parts and x not in ignored]
+        else:
+            folders = os.listdir(face_dir)
+            for folder in folders:
+                full_path = os.path.join(face_dir, folder)
+                if os.path.isdir(full_path):
+                    names.append(folder)
         return sorted(names)
 
 
@@ -108,7 +116,7 @@ class FaceCommon:
     def splits_face_data_sets(face_dir, parts=['train', 'ilfw', 'ilfw-test'], portions=[80, 10, 10]):
         cu.set_log_prefix('split_face_data_sets.log')
         cu.log("Splitting face dataset")
-        names = FaceCommon.list_face_names(face_dir)
+        names = FaceCommon.list_face_names(face_dir, part="")
         random.shuffle(names)
         count = len(names)
         counts =[]

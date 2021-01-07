@@ -29,11 +29,11 @@ pip install insightface
 ## Running the scripts
 Run the data preparation script in the following order:
 
-1. collect_faces.py, by default will generate all raw faces into ./downloads directory. You need to make sure that the first file is the anchor image for face comparison to select valid faces in the next steps
-2. prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
-3. split_data_sets.py, by default will generate datasets into train, verification, and test (80:10:10), represented by train.part, ilfw.part, and ilfw-test.part file in ./faces directory
-4. generate_train.py, by default will generate a train.lst file in ./faces directory, generate train.rec, train.idx, and property file in ./ilfw directory
-5. generate_validation.py, by default will generate pairs.txt file in ./faces directory, and generate .bin file in ./ilfw directory
+1. 01_collect_faces.py, by default will generate all raw faces into ./downloads directory. You need to make sure that the first file is the anchor image for face comparison to select valid faces in the next steps
+2. 02_prepare_faces.py, by default will validate faces and move the valid faces to ./faces directory
+3. 03_split_data_sets.py, by default will generate datasets into train, verification, and test (80:10:10), represented by train.part, ilfw.part, and ilfw-test.part file in ./faces directory
+4. 04_generate_train.py, by default will generate a train.lst file in ./faces directory, generate train.rec, train.idx, and property file in ./ilfw directory
+5. 05_generate_validation.py, by default will generate pairs.txt file in ./faces directory, and generate .bin file in ./ilfw directory
 
 Notes: ILFW is short for Indonesian Labelled Face in the Wild
 

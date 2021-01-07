@@ -35,12 +35,13 @@ if __name__ == '__main__':
         '--list-file', default='./faces/train.lst', help='Full path l.st file')
     parser.add_argument('--img-ext', default='.jpg',
                         help='the file extension of the image file')
+    parser.add_argument('--prop-file', default='./ilfw/property', help='Full path of property file')
     parser.add_argument('--prefix',
                         default='./faces',
                         help='prefix of input/output lst and rec files.')
     parser.add_argument('--output-dir',
                         default='./ilfw',
-                        help='location of lst and rec files.')
+                        help='location of .idx and .rec files.')
     cgroup = parser.add_argument_group('Options for creating image lists')
     cgroup.add_argument('--exts',
                         nargs='+',
@@ -111,3 +112,5 @@ if __name__ == '__main__':
     args.output_dir = os.path.abspath(args.output_dir)
     fc.generate_lst_file(face_dir, lst, 30)
     Face2Rec.convert_face_2_rec(args)
+    prop = args.prop_file
+    fc.generate_property_file(face_dir, prop)

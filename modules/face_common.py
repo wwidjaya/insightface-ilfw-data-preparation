@@ -23,8 +23,15 @@
 import os
 from util import CommonUtil as cu
 import random
+from face_masker import FaceMasker
 
 class FaceCommon:
+
+    @staticmethod
+    def apply_mask(image_path, mask_path='./images/blue-mask.png'):
+        show = False
+        model = "hog"
+        FaceMasker(image_path, mask_path, show, model).mask()
 
     @staticmethod
     def split_face_filename(path):
@@ -34,7 +41,6 @@ class FaceCommon:
         name = splits[0] + '_' + splits[1]
         counter = splits[2].lstrip('0')
         return name, counter
-
 
     @staticmethod
     def get_face_name(face):
@@ -46,12 +52,12 @@ class FaceCommon:
         if count >= 3:
             face = ''
             counter = 0
-            for name in names:                
+            for name in names:
                 counter = counter + 1
                 if counter == count:
                     face = face + '_' + names[counter - 1]
                 else:
-                    face = face + name[:1] 
+                    face = face + name[:1]
         return face
 
     @staticmethod
@@ -73,7 +79,8 @@ class FaceCommon:
         cu.make_directory(path)
         names = FaceCommon.list_face_names(face_dir)
         f = open(list_file_name, 'w')
-        name_bar = cu.get_secondary_bar(values=names, bar_desc='Overall progress')
+        name_bar = cu.get_secondary_bar(
+            values=names, bar_desc='Overall progress')
         for name in name_bar:
             a = []
             for file in os.listdir(face_dir + '/' + name):
@@ -93,7 +100,8 @@ class FaceCommon:
             part_file = os.path.join(face_dir, f"{part}.part")
             parts = cu.read_file_as_array(part_file)
             ignored = [".DS_Store"]
-            names = [x for x in os.listdir(face_dir) if x in parts and x not in ignored]
+            names = [x for x in os.listdir(
+                face_dir) if x in parts and x not in ignored]
         else:
             folders = os.listdir(face_dir)
             for folder in folders:
@@ -101,7 +109,6 @@ class FaceCommon:
                 if os.path.isdir(full_path):
                     names.append(folder)
         return sorted(names)
-
 
     @staticmethod
     def generate_property_file(face_dir, property_file_name):
@@ -119,7 +126,7 @@ class FaceCommon:
         names = FaceCommon.list_face_names(face_dir, part="")
         random.shuffle(names)
         count = len(names)
-        counts =[]
+        counts = []
         part_count = len(parts)
         running_count = 1
         for i, portion in enumerate(portions):
@@ -133,7 +140,7 @@ class FaceCommon:
             lines = names[start: end]
             f = open(os.path.join(face_dir, f"{part}.part"), 'w')
             for line in lines:
-               f.write(f"{line}\n")
+                f.write(f"{line}\n")
             f.close()
             running_count = running_count + current_count
             counts.append(current_count)

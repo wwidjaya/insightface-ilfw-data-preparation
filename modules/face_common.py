@@ -24,6 +24,7 @@ import os
 from util import CommonUtil as cu
 import random
 from face_masker import FaceMasker
+from settings import all_faces
 
 class FaceCommon:
 
@@ -145,3 +146,38 @@ class FaceCommon:
             running_count = running_count + current_count
             counts.append(current_count)
         cu.log('Face splitting finished')
+
+    @staticmethod
+    def check_name_list():
+        cu.set_log_verbose(False)
+        cu.set_log_prefix('check_names.log')
+        facebar = cu.get_secondary_bar(all_faces)
+        face_names = []
+        face_list = {}
+        duplicates = []
+        counter = 0
+        for face in facebar:
+            facebar.set_description(f"Checking {face}")
+            facebar.refresh()
+            face_name = FaceCommon.get_face_name(face)
+            found = any(elem == face_name for elem in face_names)
+            if found:
+                dup = face_list[face_name]["name"]
+                dup_pos = face_list[face_name]["pos"]
+                line = counter+1
+                cu.log(f"Line {line}: Find duplicate {face} with {dup} in line {dup_pos}, for face name {face_name}")
+                duplicates.append(face_name)
+            face_list[face_name] = {}
+            face_list[face_name]["name"] = face
+            face_list[face_name]["pos"] = counter + 1
+            face_names.append(face_name)
+            facebar.set_description(f"Finished Checking {face_name}")
+            facebar.refresh()
+            counter = counter + 1            
+        count_dup = len(duplicates)
+        if count_dup > 0:
+            cu.set_log_verbose(True)
+            cu.log(f"Found {count_dup} duplicates names, check check_names.log file for futher detail.")
+            quit()     
+
+

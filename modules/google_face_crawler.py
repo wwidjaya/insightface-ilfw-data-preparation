@@ -32,7 +32,8 @@ class GoogleFaceCrawler:
         v1.0
     """
     def __init__(self, args):
-        # Copy arguments for Google Image Crawler
+        cu.set_log_verbose(False)
+        cu.set_log_prefix('collect_face.log')       # Copy arguments for Google Image Crawler
         args.max_images = args.max_faces
         self.crawler = GoggleImageCrawler(args)
         t = cu.timing("Initiating model")

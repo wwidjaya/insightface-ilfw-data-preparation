@@ -26,7 +26,7 @@ from face_model import FaceModel
 from face_common import FaceCommon as fc
 import os
 import cv2
-from tqdm import tqdm
+import face_recognition
 
 class FaceDataPreparer:
   def __init__(self, args):
@@ -105,7 +105,47 @@ class FaceDataPreparer:
         
         image_file = os.path.join(folder, image_file)
         cv2.imwrite(image_file, image)
+    
+  def check_duplicate_faces(self, faces):
+    cu.set_log_verbose(False)
+    cu.set_log_prefix("check_duplicate_face.log")
+    facebar = cu.get_secondary_bar(faces)
+    faces_features = []
+    names = []
+    cu.log("Reading face feature....")
+    for face in facebar:
+      face_name = fc.get_face_name(face)
+      names.append(face_name)
+      path =  os.path.join(self.args.image_path, face_name)
+      file = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))][0]
+      file_path = os.path.join(path, file)
+      cu.log("checking {} got {}", path, file_path)
+      feature = self.model.get_feature(cv2.imread(file_path))
+      faces_features.append(feature)
+      facebar.set_description(f"Reading {face}")
+      facebar.refresh()
+    cu.log("Comparing face feature....")
+    duplicates = []
+    for i, name in enumerate(names):
+      cu.log(f"Checking duplicate on {name}..")
+      for x, feature in enumerate(faces_features):
+        if not i == x:
+          result, is_similar = self.model.compare_feature(faces_features[i], faces_features[x])
+          if is_similar:
+            dup_face = names[x]
+            cu.log(f"Find duplicate face for {name} with {dup_face}")
+            duplicate = {}
+            duplicate["name"] = name
+            duplicate["with"] = dup_face  
+            duplicates.append(duplicate)
+    dup_count = len(duplicates)
+    if dup_count > 0:
+      cu.set_log_verbose(True)
+      cu.log(f"Found {dup_count} duplicate face in the download directory {self.args.image_path}")
+      print(duplicates)
+    cu.log("Detecting duplicate face finished.")
 
+      
 
 
 

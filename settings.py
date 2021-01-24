@@ -24,9 +24,9 @@ import sys
 import os
 import json
 
-
 def set_search_path():
   sys.path.insert(1, "./modules")
+  sys.path.insert(1, "./modules/face3d")
   sys.path.insert(1, "./dataset")
   os.environ['MXNET_CUDNN_AUTOTUNE_DEFAULT'] = '0'
 
@@ -45,15 +45,17 @@ def load_faces():
   filename = cu.get_json_value(settings, 'names.filename', 'face_name_list.dat')
   range = cu.get_json_value(settings, 'names.range', [])
   faces = cu.read_file_as_array(filename)
+  all_faces = faces
   if len(range) == 2:    
     start = range[0] - 1
     end = range[1]
     faces = faces[start:end]
-  return faces
+  return faces, all_faces
 
 
 set_search_path()
 from util import CommonUtil as cu
 
 settings = read_setting()
-faces = load_faces()
+faces, all_faces = load_faces()
+

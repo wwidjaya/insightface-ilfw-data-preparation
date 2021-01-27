@@ -164,10 +164,10 @@ class FaceModel:
         emb /= norm
         return emb
     
-    def compare_feature(self, first_feature, second_feature, low_threshold=0.99, high_threshold=1.01):
+    def compare_feature(self, first_feature, second_feature, low_threshold=0.6, high_threshold=1.01):
         result = np.dot(first_feature, second_feature)
         return result, result >= low_threshold and result <= high_threshold
 
-    def compare_face(self, first_feature, second_image, low_threshold=0.99, high_threshold=1.01):
+    def compare_face(self, first_feature, second_image, low_threshold=0.6, high_threshold=1.01):
         second_feature = self.get_feature(second_image)
         return self.compare_feature(first_feature, second_feature, low_threshold, high_threshold)

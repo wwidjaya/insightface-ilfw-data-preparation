@@ -29,7 +29,7 @@ from selenium.webdriver.chrome.options import Options
 
 from util import CommonUtil as cu
 from util import ImageUtil as iu
-from face_common import FaceCommon as fc
+from util import FaceUtil as fu
 import time
 import os
 from urllib.request import Request, urlopen
@@ -119,7 +119,7 @@ class GoggleImageCrawler:
                 os.mkdir(folder_path)
 
             self.count = self.count + 1
-            file_path = fc.get_full_file_name(
+            file_path = fu.get_full_file_name(
                 folder_path, file_name, self.count, ext)
 
             cu.log("Writing image file {}", file_path)
@@ -176,7 +176,7 @@ class GoggleImageCrawler:
                         try:
                             url = actual_image.get_attribute('src')
                             image_count = image_count + self.persist_image(
-                                folder_path=images_path, file_name=fc.get_face_name(query), url=url, callback=callback)
+                                folder_path=images_path, file_name=fu.get_face_name(query), url=url, callback=callback)
                             image_urls.add(url)
                             self.imageBar.update(1)
                             self.imageBar.refresh()

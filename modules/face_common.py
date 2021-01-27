@@ -25,49 +25,15 @@ from util import CommonUtil as cu
 import random
 from face_masker import FaceMasker
 from settings import all_faces
+from util import FaceUtil as fu
 
 class FaceCommon:
 
     @staticmethod
-    def apply_mask(image_path, mask_path='./images/blue-mask.png'):
+    def apply_mask(image_path, masked_file_path = "", mask_path='./images/blue-mask.png'):
         show = False
         model = "hog"
-        FaceMasker(image_path, mask_path, show, model).mask()
-
-    @staticmethod
-    def split_face_filename(path):
-        file = os.path.split(path)[1]
-        filename = os.path.splitext(file)
-        splits = filename[0].split('_')
-        name = splits[0] + '_' + splits[1]
-        counter = splits[2].lstrip('0')
-        return name, counter
-
-    @staticmethod
-    def get_face_name(face):
-        face = face.replace(' ', '_')
-        names = face.split('_')
-        count = len(names)
-        if count == 1:
-            face = face + '_' + face
-        if count >= 3:
-            face = ''
-            counter = 0
-            for name in names:
-                counter = counter + 1
-                if counter == count:
-                    face = face + '_' + names[counter - 1]
-                else:
-                    face = face + name[:1]
-        return face
-
-    @staticmethod
-    def get_file_name(face, counter, ext):
-        return FaceCommon.get_face_name(face) + "_" + str(counter).zfill(4) + ext
-
-    @staticmethod
-    def get_full_file_name(path, face, counter, ext):
-        return os.path.join(path, FaceCommon.get_file_name(face, counter, ext))
+        FaceMasker(image_path, mask_path, show, model).mask(masked_file_path)
 
     @staticmethod
     def generate_lst_file(face_dir, list_file_name, age):
@@ -148,7 +114,7 @@ class FaceCommon:
         cu.log('Face splitting finished')
 
     @staticmethod
-    def check_name_list():
+    def check_name_list(version="1"):
         cu.set_log_verbose(False)
         cu.set_log_prefix('check_names.log')
         facebar = cu.get_secondary_bar(all_faces)
@@ -159,7 +125,7 @@ class FaceCommon:
         for face in facebar:
             facebar.set_description(f"Checking {face}")
             facebar.refresh()
-            face_name = FaceCommon.get_face_name(face)
+            face_name = fu.get_face_name(face, version)
             found = any(elem == face_name for elem in face_names)
             if found:
                 dup = face_list[face_name]["name"]

@@ -15,3 +15,8 @@ logs
 /names
 /settings.json
 /archives
+/original_faces
+/98_rename_single_names.py
+/99_rename_names.py
+/.metals
+/others

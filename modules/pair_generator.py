@@ -10,7 +10,8 @@
 import os
 import random
 from util import CommonUtil as cu
-from face_common import FaceCommon as fu
+from util import FaceUtil as fu
+from face_common import FaceCommon as fc
 
 
 class PairsGenerator:
@@ -43,7 +44,7 @@ class PairsGenerator:
         """
         Generate all matches pairs
         """
-        names = fu.list_face_names(self.face_dir, part)
+        names = fc.list_face_names(self.face_dir, part)
         namebar = cu.get_secondary_bar(values=names, bar_desc="Matching pairs generation progress")
         part_file = os.path.join(self.face_dir, f"{part}-pairs.txt")
         with open(part_file, "w") as f:
@@ -58,7 +59,7 @@ class PairsGenerator:
                         del temp[i]
                 for i, file in enumerate(temp):
                     # This line may vary depending on how your images are named.
-                    cu.log(f"Generating pair for file {file}")
+                    #cu.log(f"Generating pair for file {file}")
                     others = temp.copy()
                     if len(others) > 1:
                         del others[i]
@@ -73,7 +74,7 @@ class PairsGenerator:
         """
         Generate all mismatches pairs
         """
-        names = fu.list_face_names(self.face_dir, part)
+        names = fc.list_face_names(self.face_dir, part)
         namebar = cu.get_secondary_bar(
             values=names, bar_desc="Mismatched pairs generation progress")
         part_file = os.path.join(self.face_dir, f"{part}-pairs.txt")

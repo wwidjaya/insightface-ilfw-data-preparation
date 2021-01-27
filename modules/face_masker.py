@@ -20,7 +20,7 @@ class FaceMasker:
         self._face_img: ImageFile = None
         self._mask_img: ImageFile = None
 
-    def mask(self):
+    def mask(self, file_path = ""):
         face_image_np = face_recognition.load_image_file(self.face_path)
         face_locations = face_recognition.face_locations(
             face_image_np, model=self.model)
@@ -49,7 +49,7 @@ class FaceMasker:
                 self._face_img.show()
 
             # save
-            self._save()
+            self._save(file_path)
         else:
             print('Found no face.')
 
@@ -111,9 +111,11 @@ class FaceMasker:
         # add mask
         self._face_img.paste(mask_img, (box_x, box_y), mask_img)
 
-    def _save(self):
+    def _save(self, file_path = ""):
         path_splits = os.path.splitext(self.face_path)
-        new_face_path = path_splits[0] + '-with-mask' + path_splits[1]
+        new_face_path = file_path
+        if file_path == "":
+            new_face_path = path_splits[0] + '-with-mask' + path_splits[1]
         self._face_img.save(new_face_path)
         print(f'Save to {new_face_path}')
 

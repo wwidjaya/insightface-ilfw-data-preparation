@@ -30,10 +30,8 @@ import sys
 import numpy as np
 import pathlib
 from tqdm import tqdm
-import json
 
 import sys
-
 
 class Logger(object):
 
@@ -78,6 +76,74 @@ logger = Logger()
 
 sys.stdout = logger
 
+
+class FaceUtil:
+
+ 
+    @staticmethod
+    def split_face_filename(path):
+        file = os.path.split(path)[1]
+        filename = os.path.splitext(file)
+        splits = filename[0].split('_')
+        split_length = len(splits)
+        name = ''
+        counter = ''
+        for i, split in enumerate(splits):
+            if i == 0:
+                name = split
+            else:
+                if (i + 1) == split_length:
+                    counter = split.strip('0')
+                else:
+                    name = name + '_' + split
+
+        return name, counter
+    
+    @staticmethod
+    def get_face_name(face, version="2"):
+        face = face.replace(' ', '_')
+        if version == "1":
+            names = face.split('_')
+            count = len(names)
+            if count == 1:
+                face = face + '_' + face
+            if count >= 3:
+                face = ''
+                counter = 0
+                for name in names:
+                    counter = counter + 1
+                    if counter == count:
+                        face = face + '_' + name
+                    else:
+                        face = face + name[:1]
+    
+        if version == "2":
+            face = face.replace('.', '').replace(',', '')
+            names = face.split('_')
+            count = len(names)
+            if count == 1:
+                face = face + '_' + face
+            if count >= 3:
+                face = ''
+                counter = 0
+                for name in names:
+                    counter = counter + 1
+                    if counter == 1: 
+                        face = name
+                    else:
+                        if counter <= 2 or counter == count:
+                            face = face + '_' + name
+                        else:
+                            face = face + '_' + name[:1]
+        return face
+
+    @staticmethod
+    def get_file_name(face, counter, ext, version="2"):
+        return FaceUtil.get_face_name(face, version) + "_" + str(counter).zfill(4) + ext
+
+    @staticmethod
+    def get_full_file_name(path, face, counter, ext, version="2"):
+        return os.path.join(path, FaceUtil.get_file_name(face, counter, ext, version))    
 
 class ImageUtil:
 

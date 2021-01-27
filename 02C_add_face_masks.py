@@ -20,31 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 from  settings import faces
+from face_data_preparer import FaceDataPreparer
 import argparse
-from google_face_crawler import GoogleFaceCrawler 
-from util import CommonUtil as cu
-from face_common import FaceCommon as fc
 
-parser = argparse.ArgumentParser(description='Data Collection Program for Face Recognition Thesis Project')
+
+parser = argparse.ArgumentParser(description='Data Preparer Program for Face Recognition Thesis Project')
 # general
-parser.add_argument('--silent', default='True', help='Show crawler browser window')
+parser.add_argument('--file-ext', default='.jpg', help='The image format')
 parser.add_argument('--model-prefix', default='./models/model-r50-am-lfw/model', help='The model location prefix ')
 parser.add_argument('--model-epoch', default=0, type=int, help='The model epoch')
-parser.add_argument('--max-faces', default=30,  type=int, help='Maximum number of faces')
 parser.add_argument('--image-size', default='112,112', help='The face image size')
-parser.add_argument('--image-path', default='downloads', help='The image download paths')
-parser.add_argument('--image-format', default='.jpg', help='The image download paths')
-parser.add_argument('--sleep', default=1,  type=int, help='Sleep between interaction')
+parser.add_argument('--image-path', default='./downloads', help='The image download paths')
+parser.add_argument('--output-path', default='./faces', help='The image output  paths')
 parser.add_argument('--model', default='./models/model-r50-am-lfw/model,0', help='path to load model.')
 parser.add_argument('--gpu', default=-1, type=int, help='GPU ID')
-parser.add_argument('--chrome-exec-path', default='./modules/chromedriver.exe', help='path to load model.')
+parser.add_argument('--max-percent-masks', default=40, type=int, help='Percentage of faces applied with mask')
 args = parser.parse_args()
 
-if __name__ == '__main__':  
-  fc.check_name_list("1")
-  fc.check_name_list("2")
-  #gfc = GoogleFaceCrawler(args)
-  #gfc.crawl(faces)
-
+if __name__ == '__main__':
+  fdp = FaceDataPreparer(args)
+  fdp.apply_mask_to_faces(faces)

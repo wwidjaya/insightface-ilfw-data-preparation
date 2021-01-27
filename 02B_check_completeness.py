@@ -3,6 +3,7 @@ import argparse
 import os
 from util import CommonUtil as cu
 from face_common import FaceCommon as fc
+from util import FaceUtil as fu
 
 parser = argparse.ArgumentParser(description='Data Collection Program for Face Recognition Thesis Project')
 parser.add_argument('--image-path', default='downloads', help='The image download paths')
@@ -16,7 +17,7 @@ if __name__ == '__main__':
   extras = []
   for i, face in enumerate(faces):
     #cu.log("Checking for face {}", face)
-    face_dir = fc.get_face_name(face)
+    face_dir = fu.get_face_name(face)
     face_names.append(face_dir)
     path = os.path.join(args.image_path, face_dir)
     if not os.path.exists(path) or not os.path.isdir(path):

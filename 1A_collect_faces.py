@@ -43,8 +43,8 @@ parser.add_argument('--chrome-exec-path', default='./modules/chromedriver.exe', 
 args = parser.parse_args()
 
 if __name__ == '__main__':  
-  fc.check_name_list("1")
-  fc.check_name_list("2")
-  #gfc = GoogleFaceCrawler(args)
-  #gfc.crawl(faces)
+  fc.check_name_list(version="1")
+  fc.check_name_list(version="2")
+  gfc = GoogleFaceCrawler(args)
+  gfc.crawl(faces)
 

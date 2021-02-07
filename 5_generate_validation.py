@@ -21,10 +21,11 @@
 # SOFTWARE.
 
 import os
-import settings
+from settings import settings
 from pair_generator import PairsGenerator
 import argparse
 from lfw2pack import pack_lfw
+from util import FaceUtil as fu
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -41,6 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('--image-size', type=str, default='112,112', help='')
 
     args = parser.parse_args()
+    args = fu.update_face_dir_args(settings, args)
     args.face_dir = os.path.abspath(args.face_dir)
     generatePairs = PairsGenerator(args)
     generatePairs.generate()

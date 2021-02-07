@@ -20,11 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from  settings import faces
+from  settings import faces, settings
 from face_data_preparer import FaceDataPreparer
 import argparse
 from util import CommonUtil as cu
-from face_common import FaceCommon as fc
+from util import FaceUtil as fu
 
 parser = argparse.ArgumentParser(description='Data Preparer Program for Face Recognition Thesis Project')
 # general
@@ -39,5 +39,6 @@ parser.add_argument('--gpu', default=-1, type=int, help='GPU ID')
 args = parser.parse_args()
 
 if __name__ == '__main__':
+  args = fu.update_face_dir_args(settings, args)
   fdp = FaceDataPreparer(args)
-  fdp.check_duplicate_faces(faces) 
+  fdp.prepare_faces(faces)

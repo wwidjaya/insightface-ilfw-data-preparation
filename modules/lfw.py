@@ -36,6 +36,7 @@ import sklearn
 from sklearn.decomposition import PCA
 import mxnet as mx
 from mxnet import ndarray as nd
+from util import CommonUtil as cu
 
 
 def calculate_roc(thresholds,
@@ -196,7 +197,8 @@ def get_paths(lfw_dir, pairs, file_ext):
     issame = True
     issame_list = []
     for pair in pairs:
-        path0 =''
+        path0 = ''
+        path1 = ''
         if len(pair) == 3:
             path0 = os.path.join(
                 lfw_dir, pair[0],
@@ -213,14 +215,19 @@ def get_paths(lfw_dir, pairs, file_ext):
                 lfw_dir, pair[2],
                 pair[2] + '_' + '%04d' % int(pair[3]) + '.' + file_ext)
             issame = False
-        if os.path.exists(path0) and os.path.exists(path1):  # Only add the pair if both paths exist
+        path0_found = os.path.exists(path0)
+        path1_found = os.path.exists(path1)
+        if path0_found and path1_found:  # Only add the pair if both paths exist
             path_list += (path0, path1)
             issame_list.append(issame)
         else:
-            print('Path not exists', path0, path1)
+            if not path0_found:
+                cu.logger.info(f"Path not exists {path0}")
+            if not path1_found:
+                cu.logger.info(f"Path not exists {path1}")
             nrof_skipped_pairs += 1
     if nrof_skipped_pairs > 0:
-        print('Skipped %d image pairs' % nrof_skipped_pairs)
+        cu.logger.error('Skipped %d image pairs' % nrof_skipped_pairs)
 
     return path_list, issame_list
 

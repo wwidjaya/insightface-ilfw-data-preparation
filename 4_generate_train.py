@@ -22,9 +22,10 @@
 
 import argparse
 import os
-import settings
+from settings import settings
 from face2rec import Face2Rec
 from face_common import FaceCommon as fc
+from util import FaceUtil as fu
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -32,13 +33,10 @@ if __name__ == '__main__':
     parser.add_argument('--face-dir', default='./faces',
                         help='Full path to the directory with peeople and their names, folder should denote the Name_Surname of the person')
     parser.add_argument(
-        '--list-file', default='./faces/train.lst', help='Full path l.st file')
+        '--list-file', default='train.lst', help='The name of the .lst file')
     parser.add_argument('--img-ext', default='.jpg',
                         help='the file extension of the image file')
     parser.add_argument('--prop-file', default='./ilfw/property', help='Full path of property file')
-    parser.add_argument('--prefix',
-                        default='./faces',
-                        help='prefix of input/output lst and rec files.')
     parser.add_argument('--output-dir',
                         default='./ilfw',
                         help='location of .idx and .rec files.')
@@ -104,12 +102,18 @@ if __name__ == '__main__':
         type=bool,
         default=False,
         help='Whether to also pack multi dimensional label in the record file')
+    
     args = parser.parse_args()
+    args = fu.update_face_dir_args(settings, args)
+
+    # Preparing Parameters
     face_dir = args.face_dir
-    lst = args.list_file
+    lst = os.path.join(face_dir, args.list_file)
     img_ext = args.img_ext
-    args.prefix = os.path.abspath(args.prefix)
+    args.prefix = os.path.abspath(face_dir)
     args.output_dir = os.path.abspath(args.output_dir)
+
+    # Executing
     fc.generate_lst_file(face_dir, lst, 30)
     Face2Rec.convert_face_2_rec(args)
     prop = args.prop_file

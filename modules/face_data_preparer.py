@@ -41,10 +41,11 @@ class FaceDataPreparer:
 
 
   def prepare_faces(self, faces):
+    cu.set_logger("Prepare Face", "prepare_face.log")
     facebar = cu.get_primary_bar(faces)
     for face in facebar:
       face = fu.get_face_name(face)
-      cu.log("Initiating pre-processing for {}", face)
+      cu.logger.info(f"Initiating pre-processing for {face}")
       path =  os.path.join(self.args.image_path, face).replace(' ', '_')
       output_path =  os.path.join(self.args.output_path, face).replace(' ', '_')
 
@@ -70,7 +71,7 @@ class FaceDataPreparer:
       facebar.refresh()
       filebar = cu.get_secondary_bar(files)
       for file in filebar:
-        cu.log(f"Reading image file {file} for pre-processing...")
+        cu.logger.info(f"Reading image file {file} for pre-processing...")
         image = cv2.imread(file)
         count = count + 1
         folder = valid
@@ -79,7 +80,7 @@ class FaceDataPreparer:
         filebar.set_description(f"Processing {image_file}")
         ext = self.args.file_ext
         if (count == 1):
-          cu.log("Reading anchor image {}", file)
+          cu.logger.info(f"Reading anchor image {file}")
           anchor = self.model.get_feature(image)
           valid_count, image_file = self.valid_file(valid_count, face, ext)
         else:
@@ -87,88 +88,83 @@ class FaceDataPreparer:
           if not is_valid:
               folder = invalid
               image = iu.get_blank_image()
-              cu.log(f"File {file} tidak valid.")
+              cu.logger.info(f"File {file} tidak valid.")
           else:
             if is_found:
-              cu.log("found duplicate image {}", file)
+              cu.logger.info(f"found duplicate image {file}")
               folder = duplicate
             else:
-              cu.log("Comparing image {}", file)
+              cu.logger.info(f"Comparing image {file}")
               score, result = self.model.compare_face(anchor, image, low_threshold=0.5)
               if result:
                 valid_count, image_file = self.valid_file(valid_count, face, ext)
-                cu.log(f"File {file} sama, hasil: {score}")
+                cu.logger.info(f"File {file} sama, hasil: {score}")
               else:
                 folder = invalid
-                cu.log(f"File {file} tidak sama, hasil: {score}")
+                cu.logger.info(f"File {file} tidak sama, hasil: {score}")
         filebar.set_description(desc=f"Process for {face} is finished.", refresh=True)
         
         image_file = os.path.join(folder, image_file)
         cv2.imwrite(image_file, image)
     
   def check_duplicate_faces(self, faces):
-    cu.set_log_verbose(False)
-    cu.set_log_prefix("check_duplicate_face.log")
+    cu.set_logger('Check Duplicate Face', 'check_duplicate_face.log')
     facebar = cu.get_secondary_bar(faces)
     faces_features = []
     names = []
-    cu.log("Reading face feature....")
+    cu.logger.info("Reading face feature....")
     for face in facebar:
       face_name = fu.get_face_name(face)
       names.append(face_name)
       path =  os.path.join(self.args.image_path, face_name)
       file = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))][0]
       file_path = os.path.join(path, file)
-      #cu.log("checking {} got {}", path, file_path)
       feature = self.model.get_feature(cv2.imread(file_path))
       faces_features.append(feature)
       facebar.set_description(f"Reading {face}")
       facebar.refresh()
-    cu.log("Comparing face feature....")
+    cu.logger.info("Comparing face feature....")
     duplicates = []
     for i, name in enumerate(names):
-      #cu.log(f"Checking duplicate on {name}..")
+      #cu.logger.info(f"Checking duplicate on {name}..")
       for x, feature in enumerate(faces_features):
         if not i == x:
           result, is_similar = self.model.compare_feature(faces_features[i], faces_features[x])
           if is_similar:
             ori_name = faces[x]
             dup_face = faces[i]
-            cu.log(f"Find duplicate face for {ori_name} in line {x}, with {dup_face} in line {i}")
+            cu.logger.info(f"Find duplicate face for {ori_name} in line {x}, with {dup_face} in line {i}")
             duplicate = {}
             duplicate["name"] = ori_name
             duplicate["with"] = dup_face  
             duplicates.append(duplicate)
     dup_count = len(duplicates)
     if dup_count > 0:
-      cu.set_log_verbose(True)
-      cu.log(f"Found {dup_count} duplicate face in the download directory {self.args.image_path}")
-      print(duplicates)
-    cu.log("Detecting duplicate face finished.")
+      cu.logger.error(f"Found {dup_count} duplicate face in the download directory {self.args.image_path}")
+    cu.logger.info("Detecting duplicate face finished.")
 
       
   def apply_mask_to_faces(self, faces):
-      cu.set_log_verbose(False)
-      cu.set_log_prefix("apply_mask_to_face.log")
-      facebar = cu.get_secondary_bar(faces)
-      names = []
-      cu.log("Reading faces....")
-      for face in facebar:
-        face_name = fu.get_face_name(face)
-        names.append(face_name)
-        path =  os.path.join(self.args.output_path, face_name)
-        files = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
-        file_count = len(files)
-        mask_count = int(self.args.max_percent_masks/100*file_count)
-        if mask_count < 1: 
-          mask_count = 1
-        for x in range(mask_count):
-          file_path = os.path.join(path, files[x])
-          mask_path = fu.get_full_file_name(path, face, file_count + x + 1, self.args.file_ext)
-          fc.apply_mask(file_path, masked_file_path=mask_path)
-          facebar.set_description(f"Applying mask to {file_path} as {mask_path}")
-          facebar.refresh()
-      cu.log("Apply face mask finished.")
+    cu.set_logger("Apply Mask To Face", "apply_mask_to_face.log")
+    facebar = cu.get_secondary_bar(faces)
+    names = []
+    cu.logger.info("Reading faces....")
+    for face in facebar:
+      face_name = fu.get_face_name(face)
+      names.append(face_name)
+      path =  os.path.join(self.args.output_path, face_name)
+      files = [x for x in os.listdir(path) if not os.path.isdir(os.path.join(path, x))]
+      file_count = len(files)
+      mask_count = int(self.args.max_percent_masks/100*file_count)
+      if mask_count < 1: 
+        mask_count = 1
+      for x in range(mask_count):
+        file_path = os.path.join(path, files[x])
+        mask_path = fu.get_full_file_name(path, face, file_count + x + 1, self.args.file_ext)
+        fc.apply_mask(file_path, masked_file_path=mask_path)
+        facebar.set_description(f"Applying mask to {face}")
+        facebar.refresh()
+    cu.logger.info("Apply face mask finished.")
 
 
   

@@ -32,8 +32,7 @@ class PairsGenerator:
         self.parts = args.parts
         self.image_ext = args.image_ext
         self.ouput_dir = args.output_dir
-        cu.set_log_verbose(False)
-        cu.set_log_prefix('generate_pair.log')
+        cu.set_logger('Generate Pair','generate_pair.log')
 
     def generate(self):
         for part in self.parts:
@@ -44,6 +43,7 @@ class PairsGenerator:
         """
         Generate all matches pairs
         """
+        cu.logger.info(f"Generating matches pairs for {part}...")
         names = fc.list_face_names(self.face_dir, part)
         namebar = cu.get_secondary_bar(values=names, bar_desc="Matching pairs generation progress")
         part_file = os.path.join(self.face_dir, f"{part}-pairs.txt")
@@ -59,7 +59,7 @@ class PairsGenerator:
                         del temp[i]
                 for i, file in enumerate(temp):
                     # This line may vary depending on how your images are named.
-                    #cu.log(f"Generating pair for file {file}")
+                    #cu.logger.info(f"Generating pair for file {file}")
                     others = temp.copy()
                     if len(others) > 1:
                         del others[i]
@@ -69,11 +69,15 @@ class PairsGenerator:
                     f.write(name + "\t" + counter + "\t" + other_counter + "\n")
                 namebar.refresh()
         namebar.set_description("Matching pairs generation completed")
+        cu.logger.info(f"Generating matches pairs finished for {part}.")
+
 
     def _generate_mismatches_pairs(self, part):
         """
         Generate all mismatches pairs
         """
+        cu.logger.info(f"Generating mismatches pairs for {part}...")
+
         names = fc.list_face_names(self.face_dir, part)
         namebar = cu.get_secondary_bar(
             values=names, bar_desc="Mismatched pairs generation progress")
@@ -98,3 +102,4 @@ class PairsGenerator:
                 namebar.update()
                 namebar.refresh()
         namebar.set_description("Mismatched pairs generation completed")
+        cu.logger.info(f"Generating mismatches pairs for {part} finished.")

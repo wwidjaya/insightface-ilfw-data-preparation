@@ -83,7 +83,7 @@ class Face2Rec:
                 if not line or not line.strip():
                     break
                 line_number = line_number + 1
-                cu.log(f"{line_number} : {line}")
+                cu.logger.debug(f"{line_number} : {line}")
                 item = edict()
                 item.flag = 0
                 item.image_path, label, item.bbox, item.landmark, item.aligned = Face2Rec.parse_lst_line(
@@ -117,7 +117,6 @@ class Face2Rec:
     @staticmethod
     def image_encode(args, i, item, q_out):
         oitem = [item.id]
-        print(item)
         if item.flag == 0:
             fullpath = item.image_path
             header = mx.recordio.IRHeader(item.flag, item.label, item.id, 0)
@@ -176,7 +175,7 @@ class Face2Rec:
 
                 if count % 1000 == 0:
                     cur_time = time.time()
-                    cu.log('time:', cur_time - pre_time, ' count:', count)
+                    cu.logger.info('time:', cur_time - pre_time, ' count:', count)
                     pre_time = cur_time
                 count += 1
 
@@ -264,15 +263,15 @@ class Face2Rec:
 
     @staticmethod
     def convert_face_2_rec(args):
-        cu.set_log_prefix('generate_rec.log')
-        cu.set_log_verbose(False)
+        cu.set_logger('Convert Face To Rec','generate_rec.log')
+        cu.logger.info("Starting face to rec convertion...")
         if os.path.isdir(args.prefix):
             working_dir = args.prefix
         else:
             working_dir = os.path.dirname(args.prefix)
         output_dir = args.output_dir
         image_size = (112, 112)
-        cu.log(f'Image size: {image_size}')
+        cu.logger.debug(f'Image size: {image_size}')
         args.image_h = image_size[0]
         args.image_w = image_size[1]
         files = [
@@ -283,10 +282,10 @@ class Face2Rec:
         count = 0
         for fname in files:
             if fname.startswith(args.prefix) and fname.endswith('train.lst'):
-                cu.log(f'Creating .rec file from {fname} in {working_dir}')
+                cu.logger.debug(f'Creating .rec file from {fname} in {working_dir}')
                 count += 1
                 image_count = cu.count_line_in_file(fname) + 2
-                cu.log(f"Estimated image count: {image_count}")
+                cu.logger.debug(f"Estimated image count: {image_count}")
                 image_list = Face2Rec.read_list(fname)
                 # -- write_record -- #
                 if args.num_thread > 1 and multiprocessing is not None:
@@ -313,7 +312,7 @@ class Face2Rec:
                     q_out.put(None)
                     write_process.join()
                 else:
-                    cu.log(
+                    cu.logger.debug(
                         'multiprocessing not available, fall back to single threaded encoding'
                     )
                     try:
@@ -340,4 +339,5 @@ class Face2Rec:
                         image_bar.refresh()
                         cnt += 1
         if not count:
-            cu.log(f'Did not find and list file with prefix {args.prefix}')
+            cu.logger.info(f'Did not find and list file with prefix {args.prefix}')
+        cu.logger.info("Face to rec convertion finished.")

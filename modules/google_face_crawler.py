@@ -32,8 +32,7 @@ class GoogleFaceCrawler:
         v1.0
     """
     def __init__(self, args):
-        cu.set_log_verbose(False)
-        cu.set_log_prefix('collect_face.log')       # Copy arguments for Google Image Crawler
+        cu.set_logger("Google Face Crawler", 'collect_face.log')
         args.max_images = args.max_faces
         self.crawler = GoggleImageCrawler(args)
         t = cu.timing("Initiating model")
@@ -43,18 +42,18 @@ class GoogleFaceCrawler:
     
     
     def process_image(self, file_path, iu):
-        cu.log("processing image {}", file_path)
+        cu.logger.info(f"Processing image {file_path}")
         face = cv2.imread(file_path)
-        cu.log("Aigning face {}", file_path)
+        cu.logger.info(f"Aigning face {file_path}")
         aligned_face = self.model.align_face(face)
         is_found, is_valid = iu.is_duplicate(aligned_face)
         if not is_valid:
-            raise Exception("Invalid face found {}".format(file_path))
+            raise Exception(f"Invalid face found {file_path}")
         if is_found:
-            raise Exception("Duplicate face found {}".format(file_path))
-        cu.log("Writing aligned face {}", file_path)
+            raise Exception("Duplicate face found {file_path}")
+        cu.logger.info(f"Writing aligned face {file_path}" )
         cv2.imwrite(file_path, aligned_face)
-        cu.log("Finish Writing aligned face {}", file_path)
+        cu.logger.info(f"Finish Writing aligned face {file_path}")
         return 1
     
     def crawl(self, faces):

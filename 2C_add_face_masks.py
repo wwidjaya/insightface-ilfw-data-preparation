@@ -20,14 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from  settings import faces
+from  settings import faces, settings
 from face_data_preparer import FaceDataPreparer
 import argparse
+from util import FaceUtil as fu
 from util import CommonUtil as cu
+
 
 parser = argparse.ArgumentParser(description='Data Preparer Program for Face Recognition Thesis Project')
 # general
-parser.add_argument('--file_ext', default='.jpg', help='The image format')
+parser.add_argument('--file-ext', default='.jpg', help='The image format')
 parser.add_argument('--model-prefix', default='./models/model-r50-am-lfw/model', help='The model location prefix ')
 parser.add_argument('--model-epoch', default=0, type=int, help='The model epoch')
 parser.add_argument('--image-size', default='112,112', help='The face image size')
@@ -35,10 +37,15 @@ parser.add_argument('--image-path', default='./downloads', help='The image downl
 parser.add_argument('--output-path', default='./faces', help='The image output  paths')
 parser.add_argument('--model', default='./models/model-r50-am-lfw/model,0', help='path to load model.')
 parser.add_argument('--gpu', default=-1, type=int, help='GPU ID')
+parser.add_argument('--max-percent-masks', default=40, type=int, help='Percentage of faces applied with mask')
 args = parser.parse_args()
 
 if __name__ == '__main__':
-  cu.set_log_verbose(False)
-  cu.set_log_prefix("prepare_face.log")
-  fdp = FaceDataPreparer(args)
-  fdp.prepare_faces(faces)
+  is_mask = cu.get_json_value(settings, 'faces.with-mask', "True")
+  if is_mask == "True":
+    print("Starting  mask creation, based on settings")
+    args = fu.update_face_dir_args(settings, args)
+    fdp = FaceDataPreparer(args)
+    fdp.apply_mask_to_faces(faces)
+  else:
+    print("Skipping mask creation, due to settings")

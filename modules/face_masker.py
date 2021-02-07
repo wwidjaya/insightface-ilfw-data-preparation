@@ -7,6 +7,7 @@ import numpy as np
 import os
 from PIL import Image, ImageFile
 import face_recognition
+from util import CommonUtil as cu
 
 
 class FaceMasker:
@@ -51,7 +52,7 @@ class FaceMasker:
             # save
             self._save(file_path)
         else:
-            print('Found no face.')
+            cu.logger.info('Found no face.')
 
     def _mask_face(self, face_landmark: dict):
         nose_bridge = face_landmark['nose_bridge']
@@ -117,7 +118,7 @@ class FaceMasker:
         if file_path == "":
             new_face_path = path_splits[0] + '-with-mask' + path_splits[1]
         self._face_img.save(new_face_path)
-        print(f'Save to {new_face_path}')
+        cu.logger.info(f'Save to {new_face_path}')
 
     @staticmethod
     def get_distance_from_point_to_line(point, line_point1, line_point2):

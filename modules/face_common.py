@@ -37,9 +37,8 @@ class FaceCommon:
 
     @staticmethod
     def generate_lst_file(face_dir, list_file_name, age):
-        cu.set_log_prefix('generate_lst.log')
-        cu.set_log_verbose(False)
-        cu.log("Generating list file")
+        cu.set_logger('Generate List File','generate_lst.log')
+        cu.logger.info("Start Generating list file")
         names = []
         temp = os.path.split(list_file_name)
         path = temp[0]
@@ -48,17 +47,20 @@ class FaceCommon:
         f = open(list_file_name, 'w')
         name_bar = cu.get_secondary_bar(
             values=names, bar_desc='Overall progress')
+        label = 0
         for name in name_bar:
             a = []
             for file in os.listdir(face_dir + '/' + name):
-                cu.log(f"Processing {file}")
+                cu.logger.debug(f"Processing {file}")
                 name_bar.set_description(f"Processing {file}")
                 if file == ".DS_Store":
                     continue
                 a.append(face_dir + '/' + name + '/' + file)
                 f.write(str(1) + '\t' + face_dir + '/' + name +
-                        '/' + file + '\t' + str(age) + '\n')
+                        '/' + file + '\t' + str(label) + '\n')
+            label = label + 1
             name_bar.set_description(f"Processing finished")
+        cu.logger.info("Generating list file finished.")
 
     @staticmethod
     def list_face_names(face_dir, part="train"):
@@ -79,17 +81,17 @@ class FaceCommon:
 
     @staticmethod
     def generate_property_file(face_dir, property_file_name):
-        cu.set_log_prefix('generate_prop.log')
-        cu.log("Generating property file")
+        cu.set_logger('Generate Prop File','generate_prop.log')
+        cu.logger.info("Generating property file")
         count = len(FaceCommon.list_face_names(face_dir))
         f = open(property_file_name, 'w')
         f.write(f"{count},112,112")
-        cu.log('Property file generated')
+        cu.logger.info('Property file generated')
 
     @staticmethod
     def splits_face_data_sets(face_dir, parts=['train', 'ilfw', 'ilfw-test'], portions=[80, 10, 10]):
-        cu.set_log_prefix('split_face_data_sets.log')
-        cu.log("Splitting face dataset")
+        cu.set_logger('Split Data Set','split_face_data_sets.log')
+        cu.logger.info("Splitting face dataset")
         names = FaceCommon.list_face_names(face_dir, part="")
         random.shuffle(names)
         count = len(names)
@@ -111,12 +113,11 @@ class FaceCommon:
             f.close()
             running_count = running_count + current_count
             counts.append(current_count)
-        cu.log('Face splitting finished')
+        cu.logger.info('Face splitting finished')
 
     @staticmethod
     def check_name_list(version="1"):
-        cu.set_log_verbose(False)
-        cu.set_log_prefix('check_names.log')
+        cu.set_logger("check_name_list", 'check_names.log')
         facebar = cu.get_secondary_bar(all_faces)
         face_names = []
         face_list = {}
@@ -131,7 +132,7 @@ class FaceCommon:
                 dup = face_list[face_name]["name"]
                 dup_pos = face_list[face_name]["pos"]
                 line = counter+1
-                cu.log(f"Line {line}: Find duplicate {face} with {dup} in line {dup_pos}, for face name {face_name}")
+                cu.logger.infoger.warning(f"Line {line}: Find duplicate {face} with {dup} in line {dup_pos}, for face name {face_name}")
                 duplicates.append(face_name)
             face_list[face_name] = {}
             face_list[face_name]["name"] = face
@@ -143,7 +144,7 @@ class FaceCommon:
         count_dup = len(duplicates)
         if count_dup > 0:
             cu.set_log_verbose(True)
-            cu.log(f"Found {count_dup} duplicates names, check check_names.log file for futher detail.")
+            cu.logger.infoger.warning(f"Found {count_dup} duplicates names, check check_names.log file for futher detail.")
             quit()     
 
 

@@ -37,7 +37,8 @@ import lfw
 from util import CommonUtil as cu
 
 def pack_lfw(args):
-
+  cu.set_logger('Pack LFW', 'pack_lfw.log')
+  cu.logger.info("Packing rec into bin....")
   for part in args.parts:
     face_dir = args.face_dir
     pairs = lfw.read_pairs(os.path.join(face_dir, f'{part}-pairs.txt'))
@@ -55,3 +56,4 @@ def pack_lfw(args):
     output_file = os.path.join(args.output_dir, f"{part}.bin")
     with open(output_file, 'wb') as f:
       pickle.dump((bins, issame_list), f, protocol=pickle.HIGHEST_PROTOCOL)
+  cu.logger.info("Packing rec finished.")

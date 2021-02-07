@@ -90,12 +90,15 @@ class GoggleImageCrawler:
             req.add_header('Accept-Language', 'en-US,en;q=0.8')
             req.add_header('Connection', 'keep-alive')
             t(", and done.")
-            cu.log("Converting url {} to image", url)
-            image = np.asarray(bytearray(urlopen(req).read()), dtype="uint8")
+            cu.logger.info(f"Getting image from url {url}")
+            img = bytearray(urlopen(req).read())
+            cu.logger.info(f"Converting url {url} to image")
+            image = np.asarray(img, dtype="uint8")
+            cu.logger.info(f"Decoding image from url {url}")
             image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-            cu.log("Finish converting url {} to image", url)
+            cu.logger.info(f"Finish converting url {url} to image")
         except Exception as e:
-            cu.log(f"Error while trying to get image from url {url} {e}")
+            cu.logger.info(f"Error while trying to save image from url {url} {e}")
         return image, ext
 
     def persist_image(self, folder_path: str, file_name: str, url: str, callback):
@@ -103,9 +106,9 @@ class GoggleImageCrawler:
             image, ext = self.url_to_image(url)
             is_found, is_valid = iu.is_duplicate(image)
             if not is_valid:
-                raise Exception("find invalid  image: {}".format(url))
+                raise Exception(f"find invalid  image: {url}")
             if is_found:
-                raise Exception("find duplicate image: {}".format(url))
+                raise Exception(f"find duplicate image: {url}")
 
             if ext == "":
                 ext = ".jpg"
@@ -122,9 +125,9 @@ class GoggleImageCrawler:
             file_path = fu.get_full_file_name(
                 folder_path, file_name, self.count, ext)
 
-            cu.log("Writing image file {}", file_path)
+            cu.logger.info(f"Writing image file {file_path}")
             cv2.imwrite(file_path, image)
-            cu.log("Finished Writing image file {}", file_path)
+            cu.logger.info(f"Finished Writing image file {file_path}")
             result = 0
             try:
                 result = callback(file_path, iu)
@@ -135,7 +138,7 @@ class GoggleImageCrawler:
                 raise
             return result
         except Exception as e:
-            cu.log(f"ERROR - Could not save {url} - {e}")
+            cu.logger.info(f"Could not save {url} - {e}")
             raise
 
     def fetch_image_urls(self, query: str, callback):
@@ -169,10 +172,10 @@ class GoggleImageCrawler:
                     continue
 
                 # extract image urls
-                actual_images = self.wd.find_elements_by_css_selector(
-                    'img.n3VNCb')
+                actual_images = self.wd.find_elements_by_css_selector('img.n3VNCb')
                 for actual_image in actual_images:
                     if actual_image.get_attribute('src') and 'http' in actual_image.get_attribute('src'):
+                        url = ''
                         try:
                             url = actual_image.get_attribute('src')
                             image_count = image_count + self.persist_image(
@@ -181,12 +184,14 @@ class GoggleImageCrawler:
                             self.imageBar.update(1)
                             self.imageBar.refresh()
                         except Exception as e:
-                            cu.log(f"ERROR - Could not save {url} - {e}")
+                            cu.logger.info(f"Could not save {url} - {e}")
 
                 if image_count >= max_image_count:
                     break
             else:
-                time.sleep(30)
+                cu.logger.info(f"Sleeping for a few seconds..")
+                time.sleep(2)
+                cu.logger.info(f"Return from sleeping.")
                 return
                 load_more_button = self.wd.find_element_by_css_selector(
                     ".mye4qd")

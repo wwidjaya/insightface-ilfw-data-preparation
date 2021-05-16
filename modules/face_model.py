@@ -92,14 +92,14 @@ def get_model(ctx, image_size, prefix, epoch, layer):
 
 
 class FaceModel:
-    def __init__(self, args, use_large_detector=False):
+    def __init__(self, args, use_large_detector=False, model_root="./models"):
         ctx_id = args.ctx_id
         model_prefix = args.model_prefix
         model_epoch = args.model_epoch
         if use_large_detector:
-            self.detector = insightface.model_zoo.get_model('retinaface_r50_v1')
+            self.detector = insightface.model_zoo.get_model('retinaface_r50_v1', root=model_root)
         else:
-            self.detector = insightface.model_zoo.get_model('retinaface_mnet025_v2')
+            self.detector = insightface.model_zoo.get_model('retinaface_mnet025_v2', root=model_root)
         self.detector.prepare(ctx_id=ctx_id)
         if ctx_id>=0:
             ctx = mx.gpu(ctx_id)
@@ -169,5 +169,10 @@ class FaceModel:
         return result, result >= low_threshold and result <= high_threshold
 
     def compare_face(self, first_feature, second_image, low_threshold=0.6, high_threshold=1.01):
+        second_feature = self.get_feature(second_image)
+        return self.compare_feature(first_feature, second_feature, low_threshold, high_threshold)
+
+    def compare_image(self, first_image, second_image, low_threshold=0.6, high_threshold=1.01):
+        first_feature = self.get_feature(first_image)
         second_feature = self.get_feature(second_image)
         return self.compare_feature(first_feature, second_feature, low_threshold, high_threshold)

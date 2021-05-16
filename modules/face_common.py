@@ -24,7 +24,7 @@ import os
 from util import CommonUtil as cu
 import random
 from face_masker import FaceMasker
-from settings import all_faces
+from settings import all_faces, faces
 from util import FaceUtil as fu
 
 class FaceCommon:
@@ -72,7 +72,9 @@ class FaceCommon:
             names = [x for x in os.listdir(
                 face_dir) if x in parts and x not in ignored]
         else:
-            folders = os.listdir(face_dir)
+            folders = []
+            for face in faces:
+                folders.append(fu.get_face_name(face))
             for folder in folders:
                 full_path = os.path.join(face_dir, folder)
                 if os.path.isdir(full_path):

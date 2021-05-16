@@ -1,0 +1,1 @@
+python3.6 ./1A_collect_faces.py --image-path=/home/wwidjaya/drive/downloads --chrome-exec-path=/usr/bin/chromedriver

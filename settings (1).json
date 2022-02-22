@@ -1,0 +1,11 @@
+{
+  "names": {
+    "filename":"./names/2021.01.01_name_list_all.dat",
+    "range":[1, 100]
+  },
+  "faces": {
+    "with-mask": "False",
+    "mask-folder": "with-mask",
+    "without-mask-folder": "without-mask"
+    } 
+}
